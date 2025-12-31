@@ -2,6 +2,13 @@ import { Button } from "@/components/ui/button";
 import { ShoppingCart } from "lucide-react";
 import AnimatedSection from "@/components/ui/AnimatedSection";
 
+import xiaomi14Ultra from "@/assets/products/xiaomi-14-ultra.jpg";
+import xiaomiTvAPro from "@/assets/products/xiaomi-tv-a-pro.jpg";
+import roborockS8Pro from "@/assets/products/roborock-s8-pro.jpg";
+import redmiNote13Pro from "@/assets/products/redmi-note-13-pro.jpg";
+import xiaomiMonitor27 from "@/assets/products/xiaomi-monitor-27.jpg";
+import miAirPurifier4 from "@/assets/products/mi-air-purifier-4.jpg";
+
 const products = [
   {
     id: 1,
@@ -10,6 +17,7 @@ const products = [
     originalPrice: "۴۹,۰۰۰,۰۰۰",
     discount: "۷٪",
     category: "موبایل",
+    image: xiaomi14Ultra,
   },
   {
     id: 2,
@@ -18,6 +26,7 @@ const products = [
     originalPrice: "۲۵,۰۰۰,۰۰۰",
     discount: "۱۰٪",
     category: "تلویزیون",
+    image: xiaomiTvAPro,
   },
   {
     id: 3,
@@ -26,6 +35,7 @@ const products = [
     originalPrice: null,
     discount: null,
     category: "جارو رباتیک",
+    image: roborockS8Pro,
   },
   {
     id: 4,
@@ -34,6 +44,7 @@ const products = [
     originalPrice: "۲۰,۵۰۰,۰۰۰",
     discount: "۸٪",
     category: "موبایل",
+    image: redmiNote13Pro,
   },
   {
     id: 5,
@@ -42,6 +53,7 @@ const products = [
     originalPrice: null,
     discount: null,
     category: "مانیتور",
+    image: xiaomiMonitor27,
   },
   {
     id: 6,
@@ -50,6 +62,7 @@ const products = [
     originalPrice: "۴,۸۰۰,۰۰۰",
     discount: "۱۲٪",
     category: "لوازم خانگی",
+    image: miAirPurifier4,
   },
 ];
 
@@ -70,9 +83,13 @@ const FeaturedProducts = () => {
           {products.map((product, index) => (
             <AnimatedSection key={product.id} animation="fade-up" delay={index * 100}>
               <div className="group bg-card rounded-2xl border border-border overflow-hidden hover:border-primary/30 transition-all duration-300 hover:shadow-xl">
-                {/* Product Image Placeholder */}
-                <div className="relative aspect-square bg-secondary/50 flex items-center justify-center">
-                  <div className="text-6xl text-muted-foreground/20">📱</div>
+                {/* Product Image */}
+                <div className="relative aspect-square bg-secondary/30 flex items-center justify-center overflow-hidden">
+                  <img 
+                    src={product.image} 
+                    alt={product.name}
+                    className="w-full h-full object-contain p-4 group-hover:scale-105 transition-transform duration-500"
+                  />
                   {product.discount && (
                     <span className="absolute top-4 right-4 bg-primary text-primary-foreground text-sm font-bold px-3 py-1 rounded-full">
                       {product.discount} تخفیف
