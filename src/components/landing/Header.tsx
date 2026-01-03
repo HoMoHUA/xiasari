@@ -1,76 +1,101 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Menu, X, Phone, Sun, Moon } from "lucide-react";
-import { useTheme } from "next-themes";
+import { Phone } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Link } from "react-router-dom";
 
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const { theme, setTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  const [headerState, setHeaderState] = useState<'normal' | 'transitioning' | 'scrolled'>('normal');
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 100);
+      const scrolled = window.scrollY > 100;
+      
+      if (scrolled !== isScrolled) {
+        setHeaderState('transitioning');
+        setIsScrolled(scrolled);
+        
+        // Reset transitioning state after animation completes
+        setTimeout(() => {
+          setHeaderState(scrolled ? 'scrolled' : 'normal');
+        }, 600);
+      }
     };
-    window.addEventListener("scroll", handleScroll);
+    
+    window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  const toggleTheme = () => {
-    setTheme(theme === "dark" ? "light" : "dark");
-  };
+  }, [isScrolled]);
 
   return (
     <>
       {/* Spacer for normal header */}
-      <div className={cn(
-        "transition-all duration-700",
-        isScrolled ? "h-0" : "h-24"
-      )} />
+      <div 
+        className="transition-all ease-out"
+        style={{
+          height: isScrolled ? 0 : 80,
+          transitionDuration: '600ms',
+          transitionTimingFunction: 'cubic-bezier(0.34, 1.56, 0.64, 1)'
+        }}
+      />
 
       <header
         className={cn(
-          "fixed z-50 transition-all duration-700 ease-[cubic-bezier(0.4,0,0.2,1)]",
-          isScrolled
-            ? "top-4 left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] max-w-5xl rounded-2xl bg-background/50 backdrop-blur-2xl border border-border/30 shadow-2xl"
-            : "top-0 left-0 right-0 bg-background/70 backdrop-blur-xl border-b border-border/20"
+          "fixed z-50",
+          headerState === 'transitioning' && "transition-none"
         )}
         style={{
+          top: isScrolled ? 16 : 0,
+          left: isScrolled ? '50%' : 0,
+          right: isScrolled ? 'auto' : 0,
+          transform: isScrolled ? 'translateX(-50%)' : 'none',
+          width: isScrolled ? 'calc(100% - 2rem)' : '100%',
+          maxWidth: isScrolled ? '64rem' : 'none',
+          borderRadius: isScrolled ? '1rem' : 0,
+          background: isScrolled 
+            ? 'rgba(18, 18, 18, 0.7)' 
+            : 'rgba(18, 18, 18, 0.8)',
+          backdropFilter: 'blur(24px) saturate(180%)',
+          WebkitBackdropFilter: 'blur(24px) saturate(180%)',
+          border: isScrolled 
+            ? '1px solid rgba(255, 255, 255, 0.1)' 
+            : 'none',
+          borderBottom: isScrolled 
+            ? 'none' 
+            : '1px solid rgba(255, 255, 255, 0.05)',
           boxShadow: isScrolled 
-            ? '0 8px 32px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.05)' 
-            : 'none'
+            ? '0 8px 32px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.05) inset' 
+            : 'none',
+          transition: 'all 600ms cubic-bezier(0.34, 1.56, 0.64, 1)',
         }}
       >
-        {/* Live blur overlay */}
-        <div className="absolute inset-0 live-blur rounded-inherit pointer-events-none" />
-
-        <div className={cn(
-          "relative z-10 transition-all duration-700",
-          isScrolled ? "px-6" : "container mx-auto px-4"
-        )}>
-          <div className={cn(
-            "flex items-center justify-between transition-all duration-700",
-            isScrolled ? "h-14" : "h-20"
-          )}>
+        <div 
+          className="relative z-10"
+          style={{
+            padding: isScrolled ? '0 1.5rem' : '0 1rem',
+            maxWidth: isScrolled ? 'none' : '1280px',
+            margin: '0 auto',
+            transition: 'all 600ms cubic-bezier(0.34, 1.56, 0.64, 1)',
+          }}
+        >
+          <div 
+            className="flex items-center justify-between"
+            style={{
+              height: isScrolled ? 56 : 80,
+              transition: 'all 600ms cubic-bezier(0.34, 1.56, 0.64, 1)',
+            }}
+          >
             {/* Logo */}
             <Link 
               to="/" 
-              className={cn(
-                "font-bold text-primary transition-all duration-500 hover:scale-105",
-                isScrolled ? "text-lg" : "text-2xl"
-              )}
+              className="font-bold text-primary hover:scale-105 transition-transform duration-300"
+              style={{
+                fontSize: isScrolled ? '1.125rem' : '1.5rem',
+                transition: 'font-size 600ms cubic-bezier(0.34, 1.56, 0.64, 1)',
+              }}
             >
-              <span className="relative">
-                شیائومی ساری
-                <span className="absolute -bottom-1 left-0 right-0 h-0.5 bg-primary/30 scale-x-0 group-hover:scale-x-100 transition-transform duration-300" />
-              </span>
+              شیائومی ساری
             </Link>
 
             {/* Desktop Navigation */}
@@ -84,7 +109,7 @@ const Header = () => {
                 <Link 
                   key={index}
                   to={item.href} 
-                  className="relative text-foreground hover:text-primary transition-all duration-300 font-medium group py-2"
+                  className="relative text-foreground hover:text-primary transition-colors duration-300 font-medium group py-2"
                 >
                   {item.label}
                   <span className="absolute bottom-0 right-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full rounded-full" />
@@ -92,38 +117,24 @@ const Header = () => {
               ))}
             </nav>
 
-            {/* CTA Button & Theme Toggle */}
+            {/* CTA Button */}
             <div className="hidden md:flex items-center gap-3">
-              {/* Theme Toggle */}
-              {mounted && (
-                <button
-                  onClick={toggleTheme}
-                  className={cn(
-                    "relative rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 overflow-hidden group",
-                    isScrolled ? "w-9 h-9" : "w-10 h-10",
-                    "bg-secondary/50 hover:bg-secondary"
-                  )}
-                  aria-label="تغییر تم"
-                >
-                  <div className="absolute inset-0 bg-primary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                  {theme === "dark" ? (
-                    <Sun className="w-5 h-5 text-foreground group-hover:rotate-180 transition-transform duration-500" />
-                  ) : (
-                    <Moon className="w-5 h-5 text-foreground group-hover:-rotate-12 transition-transform duration-300" />
-                  )}
-                </button>
-              )}
-              
               <a href="tel:01133333333" className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors">
                 <Phone className="w-4 h-4" />
-                <span className={cn("transition-all duration-300", isScrolled ? "text-xs" : "text-sm")}>
+                <span 
+                  className="transition-all duration-300"
+                  style={{
+                    fontSize: isScrolled ? '0.75rem' : '0.875rem',
+                    transition: 'font-size 600ms cubic-bezier(0.34, 1.56, 0.64, 1)',
+                  }}
+                >
                   ۰۱۱-۳۳۳۳۳۳۳۳
                 </span>
               </a>
               <Button 
                 variant="default" 
                 size={isScrolled ? "sm" : "default"}
-                className="rounded-xl transition-all duration-300 hover:scale-105 animate-pulse-glow"
+                className="rounded-xl hover:scale-105"
               >
                 تماس با ما
               </Button>
@@ -135,28 +146,39 @@ const Header = () => {
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             >
               <div className="relative w-6 h-6">
-                <span className={cn(
-                  "absolute top-1 left-0 w-6 h-0.5 bg-foreground transition-all duration-300",
-                  isMobileMenuOpen && "rotate-45 top-3"
-                )} />
-                <span className={cn(
-                  "absolute top-3 left-0 w-6 h-0.5 bg-foreground transition-all duration-300",
-                  isMobileMenuOpen && "opacity-0"
-                )} />
-                <span className={cn(
-                  "absolute top-5 left-0 w-6 h-0.5 bg-foreground transition-all duration-300",
-                  isMobileMenuOpen && "-rotate-45 top-3"
-                )} />
+                <span 
+                  className="absolute left-0 w-6 h-0.5 bg-foreground transition-all duration-300"
+                  style={{
+                    top: isMobileMenuOpen ? 12 : 4,
+                    transform: isMobileMenuOpen ? 'rotate(45deg)' : 'none',
+                  }}
+                />
+                <span 
+                  className="absolute top-3 left-0 w-6 h-0.5 bg-foreground transition-all duration-300"
+                  style={{
+                    opacity: isMobileMenuOpen ? 0 : 1,
+                  }}
+                />
+                <span 
+                  className="absolute left-0 w-6 h-0.5 bg-foreground transition-all duration-300"
+                  style={{
+                    top: isMobileMenuOpen ? 12 : 20,
+                    transform: isMobileMenuOpen ? 'rotate(-45deg)' : 'none',
+                  }}
+                />
               </div>
             </button>
           </div>
 
           {/* Mobile Menu */}
           <div
-            className={cn(
-              "md:hidden overflow-hidden transition-all duration-500 ease-out",
-              isMobileMenuOpen ? "max-h-96 pb-4 opacity-100" : "max-h-0 opacity-0"
-            )}
+            className="md:hidden overflow-hidden"
+            style={{
+              maxHeight: isMobileMenuOpen ? 400 : 0,
+              opacity: isMobileMenuOpen ? 1 : 0,
+              paddingBottom: isMobileMenuOpen ? 16 : 0,
+              transition: 'all 400ms cubic-bezier(0.34, 1.56, 0.64, 1)',
+            }}
           >
             <nav className="flex flex-col gap-1">
               {[
@@ -169,7 +191,7 @@ const Header = () => {
                   key={index}
                   to={item.href}
                   className="text-foreground hover:text-primary hover:bg-primary/5 transition-all duration-300 font-medium px-4 py-3 rounded-xl"
-                  style={{ animationDelay: `${index * 50}ms` }}
+                  onClick={() => setIsMobileMenuOpen(false)}
                 >
                   {item.label}
                 </Link>

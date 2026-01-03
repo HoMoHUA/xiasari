@@ -1,17 +1,10 @@
 import { useState, useEffect } from "react";
-import { Home, Grid3X3, Phone, Sun, Moon, ShoppingCart } from "lucide-react";
-import { useTheme } from "next-themes";
+import { Home, Grid3X3, Phone, ShoppingCart, ArrowUp } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const FloatingToolbar = () => {
-  const { theme, setTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -30,8 +23,8 @@ const FloatingToolbar = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [lastScrollY]);
 
-  const toggleTheme = () => {
-    setTheme(theme === "dark" ? "light" : "dark");
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const navItems = [
@@ -51,7 +44,7 @@ const FloatingToolbar = () => {
         )}
       >
         <div className="relative shiny-border rounded-3xl p-[2px]">
-          <div className="relative bg-background/60 backdrop-blur-2xl rounded-3xl overflow-hidden">
+          <div className="relative bg-[#121212]/80 backdrop-blur-2xl rounded-3xl overflow-hidden">
             <div className="absolute inset-0 live-blur" />
             
             <div className="relative z-10 flex items-center justify-around py-3 px-2">
@@ -69,25 +62,17 @@ const FloatingToolbar = () => {
                 </a>
               ))}
               
-              {mounted && (
-                <button
-                  onClick={toggleTheme}
-                  className="group flex flex-col items-center gap-1 px-3 py-2 rounded-2xl hover:bg-primary/10 transition-all duration-300"
-                  aria-label="تغییر تم"
-                >
-                  <div className="relative">
-                    {theme === "dark" ? (
-                      <Sun className="w-5 h-5 text-foreground group-hover:text-primary transition-colors group-hover:scale-110 group-hover:rotate-180 transform duration-500" />
-                    ) : (
-                      <Moon className="w-5 h-5 text-foreground group-hover:text-primary transition-colors group-hover:scale-110 group-hover:-rotate-12 transform duration-300" />
-                    )}
-                    <div className="absolute inset-0 bg-primary/20 blur-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                  </div>
-                  <span className="text-[10px] text-muted-foreground group-hover:text-primary transition-colors">
-                    {theme === "dark" ? "روشن" : "تاریک"}
-                  </span>
-                </button>
-              )}
+              <button
+                onClick={scrollToTop}
+                className="group flex flex-col items-center gap-1 px-3 py-2 rounded-2xl hover:bg-primary/10 transition-all duration-300"
+                aria-label="بالای صفحه"
+              >
+                <div className="relative">
+                  <ArrowUp className="w-5 h-5 text-foreground group-hover:text-primary transition-colors group-hover:scale-110 group-hover:-translate-y-1 transform duration-300" />
+                  <div className="absolute inset-0 bg-primary/20 blur-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                </div>
+                <span className="text-[10px] text-muted-foreground group-hover:text-primary transition-colors">بالا</span>
+              </button>
             </div>
 
             <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1/2 h-[2px] bg-gradient-to-r from-transparent via-primary to-transparent opacity-50" />
@@ -103,7 +88,7 @@ const FloatingToolbar = () => {
         )}
       >
         <div className="relative shiny-border rounded-3xl p-[2px]">
-          <div className="relative bg-background/60 backdrop-blur-2xl rounded-3xl overflow-hidden">
+          <div className="relative bg-[#121212]/80 backdrop-blur-2xl rounded-3xl overflow-hidden">
             <div className="absolute inset-0 live-blur" />
             
             <div className="relative z-10 flex flex-col items-center gap-1 py-4 px-2">
@@ -124,25 +109,17 @@ const FloatingToolbar = () => {
               {/* Divider */}
               <div className="w-8 h-[1px] bg-border/50 my-1" />
               
-              {mounted && (
-                <button
-                  onClick={toggleTheme}
-                  className="group flex flex-col items-center gap-1 px-4 py-3 rounded-2xl hover:bg-primary/10 transition-all duration-300 w-full"
-                  aria-label="تغییر تم"
-                >
-                  <div className="relative">
-                    {theme === "dark" ? (
-                      <Sun className="w-5 h-5 text-foreground group-hover:text-primary transition-colors group-hover:scale-110 group-hover:rotate-180 transform duration-500" />
-                    ) : (
-                      <Moon className="w-5 h-5 text-foreground group-hover:text-primary transition-colors group-hover:scale-110 group-hover:-rotate-12 transform duration-300" />
-                    )}
-                    <div className="absolute inset-0 bg-primary/20 blur-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                  </div>
-                  <span className="text-[10px] text-muted-foreground group-hover:text-primary transition-colors">
-                    {theme === "dark" ? "روشن" : "تاریک"}
-                  </span>
-                </button>
-              )}
+              <button
+                onClick={scrollToTop}
+                className="group flex flex-col items-center gap-1 px-4 py-3 rounded-2xl hover:bg-primary/10 transition-all duration-300 w-full"
+                aria-label="بالای صفحه"
+              >
+                <div className="relative">
+                  <ArrowUp className="w-5 h-5 text-foreground group-hover:text-primary transition-colors group-hover:scale-110 group-hover:-translate-y-1 transform duration-300" />
+                  <div className="absolute inset-0 bg-primary/20 blur-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                </div>
+                <span className="text-[10px] text-muted-foreground group-hover:text-primary transition-colors">بالا</span>
+              </button>
             </div>
 
             {/* Right Glow Line */}
