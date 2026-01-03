@@ -99,6 +99,7 @@
 @layer base {
   * {
     @apply border-border;
+    font-family: 'Vazirmatn', sans-serif !important;
   }
 
   html {
@@ -106,9 +107,15 @@
   }
 
   body {
-    @apply bg-background text-foreground font-vazir;
+    @apply bg-background text-foreground;
+    font-family: 'Vazirmatn', sans-serif !important;
     font-feature-settings: "rlig" 1, "calt" 1;
     direction: rtl;
+  }
+
+  /* Force Vazirmatn on all elements */
+  h1, h2, h3, h4, h5, h6, p, span, a, button, input, textarea, select, label, div {
+    font-family: 'Vazirmatn', sans-serif !important;
   }
 }
 
@@ -288,5 +295,48 @@
 
   .parallax-fast {
     transform: translateZ(1px) scale(0.5);
+  }
+
+  /* Spring button animation */
+  @keyframes button-spring {
+    0% {
+      transform: scale(1);
+    }
+    20% {
+      transform: scale(0.92);
+    }
+    40% {
+      transform: scale(1);
+    }
+    60% {
+      transform: scale(1.04);
+    }
+    80% {
+      transform: scale(0.98);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+
+  @keyframes button-glow {
+    0% {
+      box-shadow: 0 0 0 0 hsl(var(--primary) / 0.7);
+    }
+    50% {
+      box-shadow: 0 0 20px 4px hsl(var(--primary) / 0.5);
+    }
+    100% {
+      box-shadow: 0 0 0 0 hsl(var(--primary) / 0);
+    }
+  }
+
+  .btn-spring {
+    transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .btn-spring:active {
+    animation: button-spring 0.5s cubic-bezier(0.36, 0, 0.66, -0.56) forwards,
+               button-glow 0.5s ease-out forwards;
   }
 }
