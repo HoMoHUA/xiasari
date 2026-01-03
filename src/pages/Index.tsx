@@ -7,7 +7,7 @@ import LeadForm from "@/components/landing/LeadForm";
 import Testimonials from "@/components/landing/Testimonials";
 import FAQ from "@/components/landing/FAQ";
 import Footer from "@/components/landing/Footer";
-import MobileToolbar from "@/components/landing/MobileToolbar";
+import FloatingToolbar from "@/components/landing/MobileToolbar";
 
 const Index = () => {
   return (
@@ -23,7 +23,7 @@ const Index = () => {
         <FAQ />
       </main>
       <Footer />
-      <MobileToolbar />
+      <FloatingToolbar />
     </div>
   );
 };

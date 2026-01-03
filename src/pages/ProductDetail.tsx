@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 import Header from "@/components/landing/Header";
 import Footer from "@/components/landing/Footer";
-import MobileToolbar from "@/components/landing/MobileToolbar";
+import FloatingToolbar from "@/components/landing/MobileToolbar";
 import AnimatedSection from "@/components/ui/AnimatedSection";
 
 import xiaomi14Ultra from "@/assets/products/xiaomi-14-ultra.jpg";
@@ -472,7 +472,7 @@ const ProductDetail = () => {
       </main>
 
       <Footer />
-      <MobileToolbar />
+      <FloatingToolbar />
     </div>
   );
 };
