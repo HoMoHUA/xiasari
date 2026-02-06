@@ -1,11 +1,11 @@
 <?php
 /**
- * Xiaomi Sari Theme - All-In-One Functions
- * شامل تمام CSS، JS و PHP به صورت یکپارچه
- * منابع به صورت لوکال بارگذاری می‌شوند
+ * Xiaomi Sari Theme - Complete All-In-One Functions
+ * تمام CSS، JS، فونت‌ها و قالب‌های صفحات به صورت یکپارچه
+ * فونت: AzarMehr (اول) + Vazirmatn از CDN (فالبک)
  *
  * @package Xiaomi_Sari
- * @version 2.0.0
+ * @version 3.0.0
  */
 
 if (!defined('ABSPATH')) {
@@ -13,7 +13,7 @@ if (!defined('ABSPATH')) {
 }
 
 // Theme Constants
-define('XIAOMI_SARI_VERSION', '2.0.0');
+define('XIAOMI_SARI_VERSION', '3.0.0');
 define('XIAOMI_SARI_THEME_DIR', get_template_directory());
 define('XIAOMI_SARI_THEME_URI', get_template_directory_uri());
 
@@ -61,104 +61,108 @@ function xiaomi_sari_setup() {
 add_action('after_setup_theme', 'xiaomi_sari_setup');
 
 /**
- * Enqueue Inline Styles (No External CSS Files)
+ * Enqueue Inline Styles
  */
 function xiaomi_sari_inline_styles() {
-    // Register empty stylesheet for inline styles
     wp_register_style('xiaomi-sari-main', false);
     wp_enqueue_style('xiaomi-sari-main');
     
-    // All CSS inlined
     $css = xiaomi_sari_get_all_css();
     wp_add_inline_style('xiaomi-sari-main', $css);
 }
 add_action('wp_enqueue_scripts', 'xiaomi_sari_inline_styles');
 
 /**
- * Enqueue Inline Scripts (No External JS Files)
+ * Enqueue Inline Scripts
  */
 function xiaomi_sari_inline_scripts() {
-    // Register empty script for inline
     wp_register_script('xiaomi-sari-main', false, array(), null, true);
     wp_enqueue_script('xiaomi-sari-main');
     
-    // Pass PHP variables to JS
     wp_localize_script('xiaomi-sari-main', 'xiaomiSari', array(
         'ajaxUrl' => admin_url('admin-ajax.php'),
         'nonce'   => wp_create_nonce('xiaomi_sari_nonce'),
         'themeUrl' => XIAOMI_SARI_THEME_URI,
     ));
     
-    // All JS inlined
     $js = xiaomi_sari_get_all_js();
     wp_add_inline_script('xiaomi-sari-main', $js);
 }
 add_action('wp_enqueue_scripts', 'xiaomi_sari_inline_scripts');
 
 /**
- * Load Local Vazirmatn Font
- */
-function xiaomi_sari_local_fonts() {
-    ?>
-    <style>
-    @font-face {
-        font-family: 'Vazirmatn';
-        font-style: normal;
-        font-weight: 100 900;
-        font-display: swap;
-        src: url('<?php echo XIAOMI_SARI_THEME_URI; ?>/assets/fonts/Vazirmatn-Variable.woff2') format('woff2');
-    }
-    </style>
-    <?php
-}
-add_action('wp_head', 'xiaomi_sari_local_fonts', 1);
-
-/**
- * Get All CSS
+ * Get All CSS - شامل فونت‌ها، متغیرها و استایل‌ها
  */
 function xiaomi_sari_get_all_css() {
     ob_start();
     ?>
 /* ============================================
+   FONTS - AzarMehr (Primary) + Vazirmatn (Fallback from CDN)
+   ============================================ */
+
+@font-face {
+    font-family: 'AzarMehr';
+    src: url('https://noormahbookcity.ir/wp-content/uploads/fonts/400-AzarMehr-Regular.woff2') format('woff2');
+    font-weight: 400;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'AzarMehr';
+    src: url('https://noormahbookcity.ir/wp-content/uploads/fonts/500-AzarMehr-Medium.woff2') format('woff2');
+    font-weight: 500;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'AzarMehr';
+    src: url('https://noormahbookcity.ir/wp-content/uploads/fonts/700-AzarMehr-Bold.woff2') format('woff2');
+    font-weight: 700;
+    font-display: swap;
+}
+
+@import url('https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css');
+
+/* ============================================
    CSS VARIABLES / DESIGN TOKENS
    ============================================ */
 
 :root {
-  --background: hsl(0, 0%, 7%);
-  --foreground: hsl(0, 0%, 95%);
-  --card: hsl(0, 0%, 10%);
-  --card-foreground: hsl(0, 0%, 95%);
-  --popover: hsl(0, 0%, 10%);
-  --popover-foreground: hsl(0, 0%, 95%);
-  --primary: hsl(24, 95%, 53%);
-  --primary-foreground: hsl(0, 0%, 100%);
-  --primary-rgb: 249, 115, 22;
-  --secondary: hsl(0, 0%, 15%);
-  --secondary-foreground: hsl(0, 0%, 95%);
-  --muted: hsl(0, 0%, 15%);
-  --muted-foreground: hsl(0, 0%, 65%);
-  --accent: hsl(24, 95%, 53%);
-  --accent-foreground: hsl(0, 0%, 100%);
-  --destructive: hsl(0, 62.8%, 30.6%);
-  --destructive-foreground: hsl(0, 0%, 95%);
-  --border: hsl(0, 0%, 20%);
-  --input: hsl(0, 0%, 20%);
-  --ring: hsl(24, 95%, 53%);
-  --radius: 0.75rem;
-  --radius-sm: 0.5rem;
-  --radius-lg: 1rem;
-  --radius-xl: 1.5rem;
-  --radius-2xl: 2rem;
-  --shadow-card: 0 4px 20px -4px rgba(0, 0, 0, 0.3);
-  --shadow-card-hover: 0 8px 30px -6px rgba(0, 0, 0, 0.4);
-  --shadow-button: 0 4px 14px -2px rgba(var(--primary-rgb), 0.4);
-  --shadow-glow: 0 0 20px rgba(var(--primary-rgb), 0.3);
-  --transition-fast: 0.15s ease;
-  --transition-normal: 0.3s ease;
-  --transition-slow: 0.5s ease;
-  --z-header: 50;
-  --z-modal: 100;
-  --z-tooltip: 150;
+    --background: hsl(0, 0%, 7%);
+    --foreground: hsl(0, 0%, 95%);
+    --card: hsl(0, 0%, 10%);
+    --card-foreground: hsl(0, 0%, 95%);
+    --popover: hsl(0, 0%, 10%);
+    --popover-foreground: hsl(0, 0%, 95%);
+    --primary: hsl(24, 95%, 53%);
+    --primary-foreground: hsl(0, 0%, 100%);
+    --primary-rgb: 249, 115, 22;
+    --secondary: hsl(0, 0%, 15%);
+    --secondary-foreground: hsl(0, 0%, 95%);
+    --muted: hsl(0, 0%, 15%);
+    --muted-foreground: hsl(0, 0%, 65%);
+    --accent: hsl(24, 95%, 53%);
+    --accent-foreground: hsl(0, 0%, 100%);
+    --destructive: hsl(0, 62.8%, 30.6%);
+    --destructive-foreground: hsl(0, 0%, 95%);
+    --border: hsl(0, 0%, 20%);
+    --input: hsl(0, 0%, 20%);
+    --ring: hsl(24, 95%, 53%);
+    --radius: 0.75rem;
+    --radius-sm: 0.5rem;
+    --radius-lg: 1rem;
+    --radius-xl: 1.5rem;
+    --radius-2xl: 2rem;
+    --shadow-card: 0 4px 20px -4px rgba(0, 0, 0, 0.3);
+    --shadow-card-hover: 0 8px 30px -6px rgba(0, 0, 0, 0.4);
+    --shadow-button: 0 4px 14px -2px rgba(var(--primary-rgb), 0.4);
+    --shadow-glow: 0 0 20px rgba(var(--primary-rgb), 0.3);
+    --transition-fast: 0.15s ease;
+    --transition-normal: 0.3s ease;
+    --transition-slow: 0.5s ease;
+    --z-header: 50;
+    --z-modal: 100;
+    --z-tooltip: 150;
 }
 
 /* ============================================
@@ -166,57 +170,57 @@ function xiaomi_sari_get_all_css() {
    ============================================ */
 
 *, *::before, *::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
 }
 
 html {
-  scroll-behavior: smooth;
-  font-size: 16px;
-  color-scheme: dark;
+    scroll-behavior: smooth;
+    font-size: 16px;
+    color-scheme: dark;
 }
 
 body {
-  font-family: 'Vazirmatn', sans-serif !important;
-  background-color: var(--background);
-  color: var(--foreground);
-  line-height: 1.6;
-  direction: rtl;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+    font-family: 'AzarMehr', 'Vazirmatn', sans-serif !important;
+    background-color: var(--background);
+    color: var(--foreground);
+    line-height: 1.6;
+    direction: rtl;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
 h1, h2, h3, h4, h5, h6, p, span, a, button, input, textarea, select, label, div {
-  font-family: 'Vazirmatn', sans-serif !important;
+    font-family: 'AzarMehr', 'Vazirmatn', sans-serif !important;
 }
 
 a {
-  color: inherit;
-  text-decoration: none;
-  transition: color var(--transition-fast);
+    color: inherit;
+    text-decoration: none;
+    transition: color var(--transition-fast);
 }
 
 a:hover {
-  color: var(--primary);
+    color: var(--primary);
 }
 
 img {
-  max-width: 100%;
-  height: auto;
-  display: block;
+    max-width: 100%;
+    height: auto;
+    display: block;
 }
 
 button {
-  cursor: pointer;
-  font-family: inherit;
-  border: none;
-  background: none;
+    cursor: pointer;
+    font-family: inherit;
+    border: none;
+    background: none;
 }
 
 input, textarea, select {
-  font-family: inherit;
-  font-size: inherit;
+    font-family: inherit;
+    font-size: inherit;
 }
 
 /* ============================================
@@ -224,22 +228,23 @@ input, textarea, select {
    ============================================ */
 
 .container {
-  width: 100%;
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 0 1rem;
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 1rem;
 }
 
 @media (min-width: 768px) {
-  .container {
-    padding: 0 2rem;
-  }
+    .container {
+        padding: 0 2rem;
+    }
 }
 
 .text-primary { color: var(--primary) !important; }
 .text-foreground { color: var(--foreground) !important; }
 .text-muted { color: var(--muted-foreground) !important; }
-.text-background { color: var(--background) !important; }
+.text-center { text-align: center; }
+.text-right { text-align: right; }
 
 .bg-background { background-color: var(--background) !important; }
 .bg-card { background-color: var(--card) !important; }
@@ -251,40 +256,188 @@ input, textarea, select {
 .rounded-lg { border-radius: var(--radius-lg); }
 .rounded-xl { border-radius: var(--radius-xl); }
 .rounded-2xl { border-radius: var(--radius-2xl); }
+.rounded-3xl { border-radius: 1.5rem; }
 .rounded-full { border-radius: 9999px; }
+
+.flex { display: flex; }
+.flex-col { flex-direction: column; }
+.items-center { align-items: center; }
+.justify-center { justify-content: center; }
+.justify-between { justify-content: space-between; }
+.gap-2 { gap: 0.5rem; }
+.gap-3 { gap: 0.75rem; }
+.gap-4 { gap: 1rem; }
+.gap-6 { gap: 1.5rem; }
+.gap-8 { gap: 2rem; }
+.gap-12 { gap: 3rem; }
+
+.grid { display: grid; }
+.grid-cols-1 { grid-template-columns: repeat(1, minmax(0, 1fr)); }
+.grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.grid-cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+
+@media (min-width: 640px) {
+    .sm\:grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (min-width: 768px) {
+    .md\:grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .md\:grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .md\:grid-cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+@media (min-width: 1024px) {
+    .lg\:grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .lg\:grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .lg\:grid-cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+@media (min-width: 1280px) {
+    .xl\:grid-cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+
+.mb-2 { margin-bottom: 0.5rem; }
+.mb-4 { margin-bottom: 1rem; }
+.mb-6 { margin-bottom: 1.5rem; }
+.mb-8 { margin-bottom: 2rem; }
+.mb-12 { margin-bottom: 3rem; }
+.mb-16 { margin-bottom: 4rem; }
+.mb-20 { margin-bottom: 5rem; }
+
+.mt-4 { margin-top: 1rem; }
+.mt-6 { margin-top: 1.5rem; }
+.mt-8 { margin-top: 2rem; }
+
+.pt-32 { padding-top: 8rem; }
+.pb-20 { padding-bottom: 5rem; }
+.py-8 { padding-top: 2rem; padding-bottom: 2rem; }
+.py-12 { padding-top: 3rem; padding-bottom: 3rem; }
+.py-16 { padding-top: 4rem; padding-bottom: 4rem; }
+.py-20 { padding-top: 5rem; padding-bottom: 5rem; }
+.px-4 { padding-left: 1rem; padding-right: 1rem; }
+.px-6 { padding-left: 1.5rem; padding-right: 1.5rem; }
+.p-4 { padding: 1rem; }
+.p-6 { padding: 1.5rem; }
+.p-8 { padding: 2rem; }
+
+.w-full { width: 100%; }
+.h-12 { height: 3rem; }
+.h-14 { height: 3.5rem; }
+
+.mx-auto { margin-left: auto; margin-right: auto; }
+.max-w-4xl { max-width: 56rem; }
+.max-w-lg { max-width: 32rem; }
+
+.font-bold { font-weight: 700; }
+.font-semibold { font-weight: 600; }
+.font-medium { font-weight: 500; }
+
+.text-sm { font-size: 0.875rem; }
+.text-lg { font-size: 1.125rem; }
+.text-xl { font-size: 1.25rem; }
+.text-2xl { font-size: 1.5rem; }
+.text-3xl { font-size: 1.875rem; }
+.text-4xl { font-size: 2.25rem; }
+.text-5xl { font-size: 3rem; }
+
+@media (min-width: 768px) {
+    .md\:text-4xl { font-size: 2.25rem; }
+    .md\:text-5xl { font-size: 3rem; }
+}
+@media (min-width: 1024px) {
+    .lg\:text-6xl { font-size: 3.75rem; }
+}
+
+.leading-relaxed { line-height: 1.625; }
+.line-through { text-decoration: line-through; }
+
+.overflow-hidden { overflow: hidden; }
+.relative { position: relative; }
+.absolute { position: absolute; }
+.fixed { position: fixed; }
+.inset-0 { top: 0; right: 0; bottom: 0; left: 0; }
+
+.z-10 { z-index: 10; }
+.z-20 { z-index: 20; }
+.z-50 { z-index: 50; }
+
+.transition-all { transition: all var(--transition-normal); }
+.transition-transform { transition: transform var(--transition-normal); }
+.transition-colors { transition: color var(--transition-fast), background-color var(--transition-fast); }
+.duration-300 { transition-duration: 300ms; }
+.duration-700 { transition-duration: 700ms; }
+
+.hover\:scale-105:hover { transform: scale(1.05); }
+.hover\:scale-110:hover { transform: scale(1.1); }
+
+.border { border-width: 1px; }
+.border-t { border-top-width: 1px; }
+.border-border { border-color: var(--border); }
+
+.space-y-4 > * + * { margin-top: 1rem; }
+.space-y-6 > * + * { margin-top: 1.5rem; }
+
+.aspect-square { aspect-ratio: 1 / 1; }
+
+.object-contain { object-fit: contain; }
+.object-cover { object-fit: cover; }
+
+.pointer-events-none { pointer-events: none; }
+.cursor-pointer { cursor: pointer; }
+
+.min-h-screen { min-height: 100vh; }
+.sticky { position: sticky; }
+.top-32 { top: 8rem; }
+.top-0 { top: 0; }
+.left-0 { left: 0; }
+.right-0 { right: 0; }
+
+.flex-shrink-0 { flex-shrink: 0; }
+.flex-1 { flex: 1 1 0%; }
+.min-w-0 { min-width: 0; }
+
+.sr-only { 
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+}
 
 /* ============================================
    GLASS EFFECT
    ============================================ */
 
 .glass-effect {
-  background: rgba(18, 18, 18, 0.6);
-  backdrop-filter: blur(40px);
-  -webkit-backdrop-filter: blur(40px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.15);
+    background: rgba(18, 18, 18, 0.6);
+    backdrop-filter: blur(40px);
+    -webkit-backdrop-filter: blur(40px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.15);
 }
 
 .glass-card {
-  background: rgba(26, 26, 26, 0.4);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2), inset 0 1px 0 0 rgba(255, 255, 255, 0.05);
+    background: rgba(26, 26, 26, 0.4);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2), inset 0 1px 0 0 rgba(255, 255, 255, 0.05);
 }
 
 .glass-card-hover {
-  background: rgba(26, 26, 26, 0.4);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2), inset 0 1px 0 0 rgba(255, 255, 255, 0.05);
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    background: rgba(26, 26, 26, 0.4);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2), inset 0 1px 0 0 rgba(255, 255, 255, 0.05);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .glass-card-hover:hover {
-  background: rgba(26, 26, 26, 0.6);
-  border-color: rgba(var(--primary-rgb), 0.3);
+    background: rgba(26, 26, 26, 0.6);
+    border-color: rgba(var(--primary-rgb), 0.3);
 }
 
 /* ============================================
@@ -292,96 +445,99 @@ input, textarea, select {
    ============================================ */
 
 .btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  font-weight: 600;
-  padding: 0.75rem 1.5rem;
-  border-radius: var(--radius-xl);
-  transition: all var(--transition-normal);
-  white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    font-weight: 600;
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--radius-xl);
+    transition: all var(--transition-normal);
+    white-space: nowrap;
+    cursor: pointer;
 }
 
 .btn-primary {
-  background-color: var(--primary);
-  color: var(--primary-foreground);
-  box-shadow: var(--shadow-button);
+    background-color: var(--primary);
+    color: var(--primary-foreground);
+    box-shadow: var(--shadow-button);
 }
 
 .btn-primary:hover {
-  background-color: hsl(24, 95%, 48%);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px -4px rgba(var(--primary-rgb), 0.5);
+    background-color: hsl(24, 95%, 48%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px -4px rgba(var(--primary-rgb), 0.5);
 }
 
 .btn-secondary {
-  background-color: var(--secondary);
-  color: var(--foreground);
+    background-color: var(--secondary);
+    color: var(--foreground);
 }
 
 .btn-secondary:hover {
-  background-color: hsl(0, 0%, 18%);
+    background-color: hsl(0, 0%, 18%);
 }
 
 .btn-ghost {
-  background: transparent;
-  color: var(--foreground);
+    background: transparent;
+    color: var(--foreground);
 }
 
 .btn-ghost:hover {
-  background-color: var(--secondary);
+    background-color: var(--secondary);
 }
 
 .btn-hero {
-  background: linear-gradient(135deg, var(--primary), hsl(30, 95%, 60%));
-  color: var(--primary-foreground);
-  padding: 1rem 2rem;
-  font-size: 1.125rem;
-  box-shadow: var(--shadow-glow);
+    background: linear-gradient(135deg, var(--primary), hsl(30, 95%, 60%));
+    color: var(--primary-foreground);
+    padding: 1rem 2rem;
+    font-size: 1.125rem;
+    box-shadow: var(--shadow-glow);
 }
 
 .btn-hero:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 0 30px rgba(var(--primary-rgb), 0.5);
+    transform: translateY(-3px);
+    box-shadow: 0 0 30px rgba(var(--primary-rgb), 0.5);
 }
 
 .btn-hero-outline {
-  background: transparent;
-  color: var(--foreground);
-  border: 2px solid rgba(255, 255, 255, 0.2);
-  padding: 1rem 2rem;
-  font-size: 1.125rem;
+    background: transparent;
+    color: var(--foreground);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    padding: 1rem 2rem;
+    font-size: 1.125rem;
 }
 
 .btn-hero-outline:hover {
-  background-color: rgba(255, 255, 255, 0.1);
-  border-color: rgba(255, 255, 255, 0.3);
+    background-color: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.3);
 }
 
 .btn-icon {
-  width: 2.5rem;
-  height: 2.5rem;
-  padding: 0;
+    width: 2.5rem;
+    height: 2.5rem;
+    padding: 0;
+    border-radius: 9999px;
 }
 
 .btn-lg {
-  padding: 1rem 2rem;
-  font-size: 1.125rem;
+    padding: 1rem 2rem;
+    font-size: 1.125rem;
+    height: 3.5rem;
 }
 
 .btn-sm {
-  padding: 0.5rem 1rem;
-  font-size: 0.875rem;
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
 }
 
 .btn-danger {
-  background-color: hsl(0, 62.8%, 30.6%);
-  color: var(--foreground);
+    background-color: hsl(0, 62.8%, 30.6%);
+    color: var(--foreground);
 }
 
 .btn-danger:hover {
-  background-color: hsl(0, 62.8%, 40%);
+    background-color: hsl(0, 62.8%, 40%);
 }
 
 /* ============================================
@@ -390,39 +546,39 @@ input, textarea, select {
 
 .form-input,
 .form-textarea {
-  width: 100%;
-  padding: 0.75rem 1rem;
-  background-color: var(--secondary);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-xl);
-  color: var(--foreground);
-  font-size: 1rem;
-  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+    width: 100%;
+    padding: 0.75rem 1rem;
+    background-color: var(--secondary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+    color: var(--foreground);
+    font-size: 1rem;
+    transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
 }
 
 .form-input:focus,
 .form-textarea:focus {
-  outline: none;
-  border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.2);
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.2);
 }
 
 .form-input::placeholder,
 .form-textarea::placeholder {
-  color: var(--muted-foreground);
+    color: var(--muted-foreground);
 }
 
 .form-input-lg {
-  padding: 1rem 1.25rem;
-  height: 3rem;
+    padding: 1rem 1.25rem;
+    height: 3rem;
 }
 
 .form-label {
-  display: block;
-  margin-bottom: 0.5rem;
-  font-weight: 500;
-  color: var(--foreground);
-  font-size: 0.875rem;
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: var(--foreground);
+    font-size: 0.875rem;
 }
 
 /* ============================================
@@ -430,160 +586,101 @@ input, textarea, select {
    ============================================ */
 
 .site-header {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: var(--z-header);
-  background: rgba(18, 18, 18, 0.8);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  transition: all var(--transition-normal);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: var(--z-header);
+    background: rgba(18, 18, 18, 0.8);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    transition: all 0.3s ease-out;
 }
 
 .site-header.scrolled {
-  top: 0.75rem;
-  left: 1rem;
-  right: 1rem;
-  max-width: 64rem;
-  margin: 0 auto;
-  border-radius: var(--radius-2xl);
-  background: rgba(18, 18, 18, 0.9);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    top: 0.75rem;
+    left: 1rem;
+    right: 1rem;
+    max-width: 64rem;
+    margin: 0 auto;
+    border-radius: var(--radius-2xl);
+    background: rgba(18, 18, 18, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
 }
 
 .header-content {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  height: 5rem;
-  padding: 0 1rem;
-  transition: all var(--transition-normal);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 5rem;
+    padding: 0 1rem;
+    transition: all 0.3s ease-out;
 }
 
 .site-header.scrolled .header-content {
-  height: 3.5rem;
-  padding: 0 1.5rem;
+    height: 3.5rem;
+    padding: 0 1.5rem;
 }
 
 .site-logo {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: var(--primary);
-  transition: all var(--transition-normal);
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--primary);
+    transition: all 0.3s ease-out;
 }
 
 .site-header.scrolled .site-logo {
-  font-size: 1.125rem;
+    font-size: 1.125rem;
 }
 
 .main-nav {
-  display: none;
-  align-items: center;
-  gap: 1.5rem;
+    display: none;
+    align-items: center;
+    gap: 1.5rem;
 }
 
 @media (min-width: 768px) {
-  .main-nav {
-    display: flex;
-  }
+    .main-nav {
+        display: flex;
+    }
 }
 
 .nav-link {
-  font-weight: 500;
-  color: var(--foreground);
-  transition: color var(--transition-fast);
+    font-weight: 500;
+    color: var(--foreground);
+    transition: color var(--transition-fast);
 }
 
 .nav-link:hover {
-  color: var(--primary);
+    color: var(--primary);
 }
 
-.header-cta {
-  display: none;
-  align-items: center;
-  gap: 0.75rem;
-}
-
-@media (min-width: 768px) {
-  .header-cta {
+.nav-actions {
     display: flex;
-  }
+    align-items: center;
+    gap: 0.5rem;
 }
 
-.header-phone {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  color: var(--muted-foreground);
-  transition: color var(--transition-fast);
+.cart-badge {
+    position: relative;
 }
 
-.header-phone:hover {
-  color: var(--primary);
-}
-
-.mobile-menu-toggle {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  width: 2.5rem;
-  height: 2.5rem;
-  gap: 5px;
-  border-radius: var(--radius-xl);
-  transition: background-color var(--transition-fast);
-}
-
-.mobile-menu-toggle span {
-  display: block;
-  width: 20px;
-  height: 2px;
-  background-color: var(--foreground);
-  transition: all var(--transition-normal);
-}
-
-.mobile-menu-toggle:hover {
-  background-color: rgba(255, 255, 255, 0.1);
-}
-
-@media (min-width: 768px) {
-  .mobile-menu-toggle {
-    display: none;
-  }
-}
-
-.mobile-menu {
-  display: none;
-  flex-direction: column;
-  gap: 0.25rem;
-  padding-bottom: 1rem;
-}
-
-.mobile-menu.active {
-  display: flex;
-}
-
-@media (min-width: 768px) {
-  .mobile-menu {
-    display: none !important;
-  }
-}
-
-.mobile-nav-link {
-  display: block;
-  padding: 0.75rem 1rem;
-  font-weight: 500;
-  color: var(--foreground);
-  border-radius: var(--radius-xl);
-  transition: all var(--transition-fast);
-}
-
-.mobile-nav-link:hover {
-  color: var(--primary);
-  background-color: rgba(255, 255, 255, 0.05);
+.cart-count {
+    position: absolute;
+    top: -0.5rem;
+    right: -0.5rem;
+    background: var(--primary);
+    color: var(--primary-foreground);
+    font-size: 0.75rem;
+    font-weight: 700;
+    min-width: 1.25rem;
+    height: 1.25rem;
+    border-radius: 9999px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 /* ============================================
@@ -591,716 +688,520 @@ input, textarea, select {
    ============================================ */
 
 .hero-section {
-  position: relative;
-  min-height: 100vh;
-  background: linear-gradient(180deg, var(--background) 0%, rgba(38, 38, 38, 0.3) 100%);
-  overflow: hidden;
-  padding-top: 8rem;
-  padding-bottom: 6rem;
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    padding-top: 5rem;
+}
+
+.hero-background {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+}
+
+.hero-background img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to left, rgba(18, 18, 18, 0.3), rgba(18, 18, 18, 0.95) 70%);
 }
 
 .hero-content {
-  display: grid;
-  gap: 3rem;
-  align-items: center;
+    position: relative;
+    z-index: 10;
+    max-width: 48rem;
 }
 
-@media (min-width: 1024px) {
-  .hero-content {
-    grid-template-columns: 1fr 1fr;
-  }
-}
-
-.hero-text {
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
+.hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(var(--primary-rgb), 0.1);
+    border: 1px solid rgba(var(--primary-rgb), 0.3);
+    color: var(--primary);
+    font-size: 0.875rem;
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    border-radius: 9999px;
+    margin-bottom: 1.5rem;
 }
 
 .hero-title {
-  font-size: 2.25rem;
-  font-weight: 700;
-  line-height: 1.2;
-  color: var(--foreground);
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--foreground);
+    line-height: 1.2;
+    margin-bottom: 1.5rem;
 }
 
 @media (min-width: 768px) {
-  .hero-title {
-    font-size: 3rem;
-  }
+    .hero-title {
+        font-size: 3.75rem;
+    }
 }
 
 @media (min-width: 1024px) {
-  .hero-title {
-    font-size: 3.75rem;
-  }
-}
-
-.hero-title .highlight {
-  display: block;
-  color: var(--primary);
-  margin-top: 0.5rem;
+    .hero-title {
+        font-size: 4.5rem;
+    }
 }
 
 .hero-description {
-  font-size: 1.125rem;
-  color: var(--muted-foreground);
-  line-height: 1.8;
-  max-width: 36rem;
+    font-size: 1.125rem;
+    color: var(--muted-foreground);
+    line-height: 1.75;
+    margin-bottom: 2rem;
+    max-width: 36rem;
 }
 
 @media (min-width: 768px) {
-  .hero-description {
-    font-size: 1.25rem;
-  }
+    .hero-description {
+        font-size: 1.25rem;
+    }
 }
 
 .hero-buttons {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
 }
 
-@media (min-width: 640px) {
-  .hero-buttons {
-    flex-direction: row;
-  }
+.hero-stats {
+    display: flex;
+    gap: 3rem;
+    margin-top: 4rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border);
 }
 
-.hero-image-wrapper {
-  position: relative;
+.hero-stat {
+    text-align: center;
 }
 
-.hero-image {
-  position: relative;
-  z-index: 10;
-  width: 100%;
-  border-radius: var(--radius-2xl);
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-}
-
-.hero-decoration-1 {
-  position: absolute;
-  top: -2rem;
-  right: -2rem;
-  width: 16rem;
-  height: 16rem;
-  background: rgba(var(--primary-rgb), 0.1);
-  border-radius: 50%;
-  filter: blur(60px);
-}
-
-.hero-decoration-2 {
-  position: absolute;
-  bottom: -2rem;
-  left: -2rem;
-  width: 12rem;
-  height: 12rem;
-  background: rgba(var(--primary-rgb), 0.05);
-  border-radius: 50%;
-  filter: blur(40px);
-}
-
-.scroll-indicator {
-  position: absolute;
-  bottom: 2rem;
-  left: 50%;
-  transform: translateX(-50%);
-  animation: bounce 1s infinite;
-  display: none;
+.hero-stat-value {
+    font-size: 2.25rem;
+    font-weight: 700;
+    color: var(--primary);
+    margin-bottom: 0.25rem;
 }
 
 @media (min-width: 768px) {
-  .scroll-indicator {
-    display: block;
-  }
+    .hero-stat-value {
+        font-size: 3rem;
+    }
 }
 
-.scroll-indicator-inner {
-  width: 1.5rem;
-  height: 2.5rem;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  border-radius: 9999px;
-  display: flex;
-  justify-content: center;
-}
-
-.scroll-indicator-dot {
-  width: 0.375rem;
-  height: 0.75rem;
-  background-color: rgba(255, 255, 255, 0.3);
-  border-radius: 9999px;
-  margin-top: 0.5rem;
-}
-
-@keyframes bounce {
-  0%, 100% { transform: translateX(-50%) translateY(0); }
-  50% { transform: translateX(-50%) translateY(-10px); }
+.hero-stat-label {
+    font-size: 0.875rem;
+    color: var(--muted-foreground);
 }
 
 /* ============================================
-   VALUE PROPOSITION
+   SECTIONS
    ============================================ */
 
-.value-section {
-  padding: 5rem 0;
-  background: linear-gradient(180deg, rgba(38, 38, 38, 0.3) 0%, var(--background) 100%);
+.section {
+    padding: 5rem 0;
 }
 
-.value-grid {
-  display: grid;
-  gap: 2rem;
+.section-header {
+    text-align: center;
+    margin-bottom: 4rem;
+}
+
+.section-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: var(--secondary);
+    color: var(--primary);
+    font-size: 0.875rem;
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    border-radius: 9999px;
+    margin-bottom: 1rem;
+}
+
+.section-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--foreground);
+    margin-bottom: 1rem;
 }
 
 @media (min-width: 768px) {
-  .value-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
+    .section-title {
+        font-size: 2.5rem;
+    }
 }
 
-@media (min-width: 1024px) {
-  .value-grid {
-    grid-template-columns: repeat(4, 1fr);
-  }
+.section-description {
+    font-size: 1.125rem;
+    color: var(--muted-foreground);
+    max-width: 42rem;
+    margin: 0 auto;
 }
+
+.section-bg {
+    background: rgba(var(--primary-rgb), 0.02);
+}
+
+/* ============================================
+   CARDS
+   ============================================ */
 
 .value-card {
-  text-align: center;
-  padding: 2rem;
-  border-radius: var(--radius-2xl);
-  transition: all var(--transition-normal);
+    padding: 2rem;
+    text-align: center;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .value-card:hover {
-  transform: translateY(-0.5rem);
+    transform: translateY(-8px);
 }
 
 .value-icon {
-  width: 4rem;
-  height: 4rem;
-  background: rgba(var(--primary-rgb), 0.1);
-  border-radius: var(--radius-xl);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 auto 1.5rem;
+    width: 4rem;
+    height: 4rem;
+    background: rgba(var(--primary-rgb), 0.1);
+    border-radius: var(--radius-xl);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+    color: var(--primary);
 }
 
 .value-icon svg {
-  width: 2rem;
-  height: 2rem;
-  color: var(--primary);
+    width: 2rem;
+    height: 2rem;
 }
 
 .value-title {
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: var(--foreground);
-  margin-bottom: 0.75rem;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--foreground);
+    margin-bottom: 0.75rem;
 }
 
 .value-description {
-  color: var(--muted-foreground);
-  line-height: 1.7;
+    font-size: 0.875rem;
+    color: var(--muted-foreground);
+    line-height: 1.625;
 }
 
-/* ============================================
-   SECTION TITLES
-   ============================================ */
-
-.section-title {
-  font-size: 1.875rem;
-  font-weight: 700;
-  text-align: center;
-  color: var(--foreground);
-  margin-bottom: 4rem;
-}
-
-@media (min-width: 768px) {
-  .section-title {
-    font-size: 2.25rem;
-  }
-}
-
-.section-title .highlight {
-  color: var(--primary);
-}
-
-.section-subtitle {
-  text-align: center;
-  color: var(--muted-foreground);
-  margin-bottom: 4rem;
-  margin-top: -3rem;
-  max-width: 42rem;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-/* ============================================
-   PRODUCT CATEGORIES
-   ============================================ */
-
-.categories-section {
-  padding: 5rem 0;
-  background-color: rgba(38, 38, 38, 0.3);
-}
-
-.categories-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 1.5rem;
-}
-
-@media (min-width: 768px) {
-  .categories-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-
-@media (min-width: 1024px) {
-  .categories-grid {
-    grid-template-columns: repeat(5, 1fr);
-  }
-}
-
+/* Category Card */
 .category-card {
-  position: relative;
-  display: block;
-  background-color: var(--card);
-  border-radius: var(--radius-2xl);
-  overflow: hidden;
-  border: 1px solid var(--border);
-  transition: all var(--transition-normal);
+    position: relative;
+    overflow: hidden;
+    aspect-ratio: 4 / 3;
+    cursor: pointer;
 }
 
-.category-card:hover {
-  border-color: rgba(var(--primary-rgb), 0.3);
-  box-shadow: var(--shadow-card-hover);
-  transform: translateY(-0.5rem);
+.category-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.category-image-wrapper {
-  aspect-ratio: 1;
-  padding: 1rem;
-}
-
-.category-image {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  transition: transform var(--transition-slow);
-}
-
-.category-card:hover .category-image {
-  transform: scale(1.05);
+.category-card:hover img {
+    transform: scale(1.1);
 }
 
 .category-overlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to top, rgba(18, 18, 18, 0.8) 0%, transparent 50%);
-  display: flex;
-  align-items: flex-end;
-  padding: 1rem;
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 1.5rem;
 }
 
-.category-name {
-  font-size: 1.125rem;
-  font-weight: 700;
-  color: var(--foreground);
-  text-align: center;
-  width: 100%;
+.category-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--foreground);
+    margin-bottom: 0.5rem;
 }
 
-/* ============================================
-   FEATURED PRODUCTS
-   ============================================ */
-
-.products-section {
-  padding: 5rem 0;
-  position: relative;
-  overflow: hidden;
+.category-count {
+    font-size: 0.875rem;
+    color: var(--primary);
 }
 
-.products-section .bg-decoration-1 {
-  position: absolute;
-  top: 25%;
-  right: 0;
-  width: 24rem;
-  height: 24rem;
-  background: rgba(var(--primary-rgb), 0.05);
-  border-radius: 50%;
-  filter: blur(60px);
-}
-
-.products-section .bg-decoration-2 {
-  position: absolute;
-  bottom: 0;
-  left: 25%;
-  width: 20rem;
-  height: 20rem;
-  background: rgba(var(--primary-rgb), 0.05);
-  border-radius: 50%;
-  filter: blur(60px);
-}
-
-.products-grid {
-  display: grid;
-  gap: 2rem;
-  position: relative;
-  z-index: 10;
-}
-
-@media (min-width: 640px) {
-  .products-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (min-width: 1024px) {
-  .products-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-
+/* Product Card */
 .product-card {
-  border-radius: var(--radius-2xl);
-  overflow: hidden;
+    overflow: hidden;
 }
 
 .product-image-wrapper {
-  position: relative;
-  aspect-ratio: 1;
-  background-color: rgba(38, 38, 38, 0.2);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
+    position: relative;
+    aspect-ratio: 1;
+    background: rgba(var(--primary-rgb), 0.02);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
 }
 
-.product-image {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  padding: 1rem;
-  transition: transform 0.7s ease;
+.product-image-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    padding: 1rem;
+    transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.product-card:hover .product-image {
-  transform: scale(1.1);
+.product-card:hover .product-image-wrapper img {
+    transform: scale(1.1);
 }
 
 .product-overlay {
-  position: absolute;
-  inset: 0;
-  background: rgba(18, 18, 18, 0.6);
-  backdrop-filter: blur(4px);
-  opacity: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 1rem;
-  transition: opacity var(--transition-normal);
+    position: absolute;
+    inset: 0;
+    background: rgba(18, 18, 18, 0.6);
+    backdrop-filter: blur(8px);
+    opacity: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    transition: opacity 0.3s ease;
 }
 
 .product-card:hover .product-overlay {
-  opacity: 1;
+    opacity: 1;
 }
 
-.product-action-btn {
-  width: 3rem;
-  height: 3rem;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: transform var(--transition-normal);
+.product-overlay-btn {
+    width: 3rem;
+    height: 3rem;
+    border-radius: 9999px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.3s ease;
 }
 
-.product-action-btn:hover {
-  transform: scale(1.1);
+.product-overlay-btn:hover {
+    transform: scale(1.1);
 }
 
-.product-action-btn.primary {
-  background-color: var(--primary);
-  color: var(--primary-foreground);
+.product-overlay-btn.primary {
+    background: var(--primary);
+    color: var(--primary-foreground);
 }
 
-.product-action-btn.secondary {
-  background-color: var(--secondary);
-  color: var(--foreground);
+.product-overlay-btn.secondary {
+    background: var(--secondary);
+    color: var(--foreground);
 }
 
-.product-discount-badge {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  background-color: var(--primary);
-  color: var(--primary-foreground);
-  font-size: 0.875rem;
-  font-weight: 700;
-  padding: 0.25rem 0.75rem;
-  border-radius: 9999px;
-  animation: pulse-glow 2s ease-in-out infinite;
+.product-badge {
+    position: absolute;
+    top: 1rem;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 700;
 }
 
-.product-category-badge {
-  position: absolute;
-  top: 1rem;
-  left: 1rem;
-  font-size: 0.75rem;
-  padding: 0.25rem 0.5rem;
-  border-radius: var(--radius);
+.product-badge.discount {
+    right: 1rem;
+    background: var(--primary);
+    color: var(--primary-foreground);
+}
+
+.product-badge.category {
+    left: 1rem;
+    background: rgba(18, 18, 18, 0.6);
+    backdrop-filter: blur(10px);
+    color: var(--foreground);
 }
 
 .product-info {
-  padding: 1.5rem;
+    padding: 1.5rem;
 }
 
 .product-title {
-  font-size: 1.125rem;
-  font-weight: 700;
-  color: var(--card-foreground);
-  margin-bottom: 1rem;
-  transition: color var(--transition-fast);
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--card-foreground);
+    margin-bottom: 1rem;
+    transition: color var(--transition-fast);
 }
 
 .product-card:hover .product-title {
-  color: var(--primary);
+    color: var(--primary);
 }
 
-.product-price-wrapper {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+.product-price-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 }
 
 .product-price {
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: var(--primary);
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--primary);
 }
 
 .product-original-price {
-  font-size: 0.875rem;
-  color: var(--muted-foreground);
-  text-decoration: line-through;
+    font-size: 0.875rem;
+    color: var(--muted-foreground);
+    text-decoration: line-through;
 }
 
-@keyframes pulse-glow {
-  0%, 100% { box-shadow: 0 0 20px rgba(var(--primary-rgb), 0.3); }
-  50% { box-shadow: 0 0 40px rgba(var(--primary-rgb), 0.6); }
-}
-
-/* ============================================
-   LEAD FORM SECTION
-   ============================================ */
-
-.lead-section {
-  padding: 5rem 0;
-  background-color: rgba(38, 38, 38, 0.3);
-}
-
-.lead-container {
-  max-width: 48rem;
-  margin: 0 auto;
-}
-
-.lead-form-wrapper {
-  padding: 3rem;
-  border-radius: var(--radius-2xl);
-}
-
-@media (min-width: 768px) {
-  .lead-form-wrapper {
-    padding: 4rem;
-  }
-}
-
-.lead-title {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: var(--foreground);
-  text-align: center;
-  margin-bottom: 0.5rem;
-}
-
-@media (min-width: 768px) {
-  .lead-title {
-    font-size: 1.875rem;
-  }
-}
-
-.lead-description {
-  text-align: center;
-  color: var(--muted-foreground);
-  margin-bottom: 2rem;
-}
-
-.lead-form {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-@media (min-width: 640px) {
-  .lead-form {
-    flex-direction: row;
-  }
-}
-
-.lead-form .form-input {
-  flex: 1;
-}
-
-/* ============================================
-   TESTIMONIALS
-   ============================================ */
-
-.testimonials-section {
-  padding: 5rem 0;
-}
-
-.testimonials-grid {
-  display: grid;
-  gap: 2rem;
-}
-
-@media (min-width: 768px) {
-  .testimonials-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (min-width: 1024px) {
-  .testimonials-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-
+/* Testimonial Card */
 .testimonial-card {
-  padding: 2rem;
-  border-radius: var(--radius-2xl);
-  transition: transform var(--transition-normal);
+    padding: 2rem;
 }
 
-.testimonial-card:hover {
-  transform: translateY(-0.5rem);
-}
-
-.testimonial-stars {
-  display: flex;
-  gap: 0.25rem;
-  margin-bottom: 1rem;
-}
-
-.testimonial-star {
-  width: 1.25rem;
-  height: 1.25rem;
-  color: #facc15;
-  fill: #facc15;
+.testimonial-rating {
+    display: flex;
+    gap: 0.25rem;
+    margin-bottom: 1rem;
+    color: #facc15;
 }
 
 .testimonial-text {
-  color: var(--muted-foreground);
-  line-height: 1.8;
-  margin-bottom: 1.5rem;
+    font-size: 1rem;
+    color: var(--foreground);
+    line-height: 1.75;
+    margin-bottom: 1.5rem;
 }
 
 .testimonial-author {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
 }
 
 .testimonial-avatar {
-  width: 3rem;
-  height: 3rem;
-  background: linear-gradient(135deg, var(--primary), hsl(30, 95%, 60%));
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--primary-foreground);
-  font-weight: 700;
+    width: 3rem;
+    height: 3rem;
+    border-radius: 9999px;
+    background: linear-gradient(135deg, var(--primary), hsl(30, 95%, 60%));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary-foreground);
+    font-weight: 700;
 }
 
 .testimonial-name {
-  font-weight: 700;
-  color: var(--foreground);
+    font-weight: 600;
+    color: var(--foreground);
 }
 
-.testimonial-role {
-  font-size: 0.875rem;
-  color: var(--muted-foreground);
+.testimonial-product {
+    font-size: 0.875rem;
+    color: var(--muted-foreground);
 }
 
 /* ============================================
-   FAQ SECTION
+   FAQ ACCORDION
    ============================================ */
 
-.faq-section {
-  padding: 5rem 0;
-  background-color: rgba(38, 38, 38, 0.3);
-}
-
-.faq-container {
-  max-width: 48rem;
-  margin: 0 auto;
-}
-
-.faq-list {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
 .faq-item {
-  border-radius: var(--radius-xl);
-  overflow: hidden;
+    border-bottom: 1px solid var(--border);
+}
+
+.faq-item:last-child {
+    border-bottom: none;
 }
 
 .faq-question {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 1.25rem 1.5rem;
-  font-weight: 600;
-  color: var(--foreground);
-  text-align: right;
-  transition: color var(--transition-fast);
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.5rem 0;
+    text-align: right;
+    font-weight: 600;
+    color: var(--foreground);
+    transition: color var(--transition-fast);
+    cursor: pointer;
+    background: none;
+    border: none;
 }
 
 .faq-question:hover {
-  color: var(--primary);
+    color: var(--primary);
 }
 
 .faq-icon {
-  width: 1.25rem;
-  height: 1.25rem;
-  color: var(--primary);
-  transition: transform var(--transition-normal);
+    width: 1.5rem;
+    height: 1.5rem;
+    color: var(--primary);
+    transition: transform var(--transition-normal);
+    flex-shrink: 0;
 }
 
-.faq-item.active .faq-icon {
-  transform: rotate(180deg);
+.faq-item.open .faq-icon {
+    transform: rotate(180deg);
 }
 
 .faq-answer {
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height var(--transition-normal);
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease, padding 0.3s ease;
 }
 
-.faq-item.active .faq-answer {
-  max-height: 500px;
+.faq-item.open .faq-answer {
+    max-height: 500px;
+    padding-bottom: 1.5rem;
 }
 
-.faq-answer-content {
-  padding: 0 1.5rem 1.25rem;
-  color: var(--muted-foreground);
-  line-height: 1.8;
+.faq-answer-text {
+    color: var(--muted-foreground);
+    line-height: 1.75;
+}
+
+/* ============================================
+   LEAD FORM
+   ============================================ */
+
+.lead-form-section {
+    background: linear-gradient(135deg, rgba(var(--primary-rgb), 0.1), rgba(var(--primary-rgb), 0.05));
+    border-radius: var(--radius-2xl);
+    padding: 3rem 2rem;
+}
+
+@media (min-width: 768px) {
+    .lead-form-section {
+        padding: 4rem;
+    }
+}
+
+.lead-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    max-width: 32rem;
+    margin: 0 auto;
+}
+
+@media (min-width: 768px) {
+    .lead-form {
+        flex-direction: row;
+        max-width: 36rem;
+    }
+}
+
+.lead-form .form-input {
+    flex: 1;
 }
 
 /* ============================================
@@ -1308,1198 +1209,1251 @@ input, textarea, select {
    ============================================ */
 
 .site-footer {
-  background-color: var(--foreground);
-  color: var(--background);
-  padding: 4rem 0 8rem;
-}
-
-@media (min-width: 768px) {
-  .site-footer {
-    padding-bottom: 4rem;
-  }
+    background: var(--card);
+    border-top: 1px solid var(--border);
+    padding: 4rem 0 2rem;
 }
 
 .footer-grid {
-  display: grid;
-  gap: 3rem;
-  margin-bottom: 3rem;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    margin-bottom: 3rem;
 }
 
 @media (min-width: 768px) {
-  .footer-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
+    .footer-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
 }
 
 @media (min-width: 1024px) {
-  .footer-grid {
-    grid-template-columns: repeat(4, 1fr);
-  }
+    .footer-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
 }
 
-.footer-brand .site-logo {
-  margin-bottom: 1rem;
+.footer-brand {
+    max-width: 20rem;
 }
 
-.footer-brand p {
-  color: rgba(18, 18, 18, 0.7);
-  line-height: 1.8;
+.footer-logo {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--primary);
+    margin-bottom: 1rem;
 }
 
-.footer-title {
-  font-size: 1.125rem;
-  font-weight: 700;
-  margin-bottom: 1rem;
-}
-
-.footer-links {
-  list-style: none;
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-.footer-links a {
-  color: rgba(18, 18, 18, 0.7);
-  transition: color var(--transition-fast);
-}
-
-.footer-links a:hover {
-  color: var(--primary);
-}
-
-.footer-contact-item {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  color: rgba(18, 18, 18, 0.7);
-  margin-bottom: 1rem;
-}
-
-.footer-contact-item svg {
-  width: 1.25rem;
-  height: 1.25rem;
-  color: var(--primary);
+.footer-description {
+    color: var(--muted-foreground);
+    font-size: 0.875rem;
+    line-height: 1.75;
+    margin-bottom: 1.5rem;
 }
 
 .footer-social {
-  display: flex;
-  gap: 1rem;
+    display: flex;
+    gap: 0.75rem;
 }
 
-.footer-social a {
-  width: 3rem;
-  height: 3rem;
-  background-color: rgba(18, 18, 18, 0.1);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background-color var(--transition-fast);
+.social-link {
+    width: 2.5rem;
+    height: 2.5rem;
+    background: var(--secondary);
+    border-radius: 9999px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--foreground);
+    transition: all var(--transition-fast);
 }
 
-.footer-social a:hover {
-  background-color: var(--primary);
+.social-link:hover {
+    background: var(--primary);
+    color: var(--primary-foreground);
 }
 
-.footer-social svg {
-  width: 1.25rem;
-  height: 1.25rem;
+.footer-title {
+    font-weight: 700;
+    color: var(--foreground);
+    margin-bottom: 1.5rem;
+}
+
+.footer-links {
+    list-style: none;
+}
+
+.footer-link {
+    display: block;
+    color: var(--muted-foreground);
+    font-size: 0.875rem;
+    padding: 0.5rem 0;
+    transition: color var(--transition-fast);
+}
+
+.footer-link:hover {
+    color: var(--primary);
+}
+
+.footer-contact-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: var(--muted-foreground);
+    font-size: 0.875rem;
+    margin-bottom: 1rem;
+}
+
+.footer-contact-icon {
+    width: 1.25rem;
+    height: 1.25rem;
+    color: var(--primary);
 }
 
 .footer-bottom {
-  border-top: 1px solid rgba(18, 18, 18, 0.1);
-  padding-top: 2rem;
-  text-align: center;
-  color: rgba(18, 18, 18, 0.5);
-}
-
-/* ============================================
-   MOBILE TOOLBAR
-   ============================================ */
-
-.mobile-toolbar {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  z-index: var(--z-header);
-  background: rgba(18, 18, 18, 0.95);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-  padding: 0.75rem 1rem;
-  display: flex;
-  justify-content: space-around;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
 }
 
 @media (min-width: 768px) {
-  .mobile-toolbar {
-    display: none;
-  }
+    .footer-bottom {
+        flex-direction: row;
+        justify-content: space-between;
+    }
 }
 
-.toolbar-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.25rem;
-  color: var(--muted-foreground);
-  font-size: 0.75rem;
-  transition: color var(--transition-fast);
-}
-
-.toolbar-item:hover,
-.toolbar-item.active {
-  color: var(--primary);
-}
-
-.toolbar-item svg {
-  width: 1.5rem;
-  height: 1.5rem;
+.footer-copyright {
+    color: var(--muted-foreground);
+    font-size: 0.875rem;
 }
 
 /* ============================================
-   ABOUT PAGE
+   FLOATING TOOLBAR
    ============================================ */
 
-.about-hero {
-  padding-top: 8rem;
-  padding-bottom: 5rem;
-  text-align: center;
+.floating-toolbar {
+    position: fixed;
+    z-index: 40;
 }
 
-.about-title {
-  font-size: 2.25rem;
-  font-weight: 700;
-  color: var(--foreground);
-  margin-bottom: 1.5rem;
+/* Mobile - Bottom Center */
+@media (max-width: 1023px) {
+    .floating-toolbar {
+        bottom: 1.5rem;
+        left: 50%;
+        transform: translateX(-50%);
+    }
 }
 
-@media (min-width: 768px) {
-  .about-title {
-    font-size: 3rem;
-  }
+/* Desktop - Right Side */
+@media (min-width: 1024px) {
+    .floating-toolbar {
+        top: 50%;
+        right: 1.5rem;
+        transform: translateY(-50%);
+    }
+}
+
+.toolbar-container {
+    display: flex;
+    padding: 0.5rem;
+    border-radius: 9999px;
+    background: rgba(26, 26, 26, 0.9);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
+@media (max-width: 1023px) {
+    .toolbar-container {
+        flex-direction: row;
+        gap: 0.25rem;
+    }
 }
 
 @media (min-width: 1024px) {
-  .about-title {
-    font-size: 3.75rem;
-  }
+    .toolbar-container {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
 }
 
-.about-description {
-  font-size: 1.25rem;
-  color: var(--muted-foreground);
-  line-height: 1.8;
-  max-width: 56rem;
-  margin: 0 auto;
+.toolbar-btn {
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 9999px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--foreground);
+    transition: all var(--transition-fast);
+    position: relative;
 }
 
-.stats-section {
-  padding: 4rem 0;
-  background-color: rgba(38, 38, 38, 0.3);
+.toolbar-btn:hover {
+    background: var(--secondary);
+    color: var(--primary);
 }
 
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 2rem;
+.toolbar-btn.active {
+    background: var(--primary);
+    color: var(--primary-foreground);
+}
+
+.toolbar-badge {
+    position: absolute;
+    top: -0.25rem;
+    right: -0.25rem;
+    background: var(--primary);
+    color: var(--primary-foreground);
+    font-size: 0.625rem;
+    font-weight: 700;
+    min-width: 1rem;
+    height: 1rem;
+    border-radius: 9999px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ============================================
+   PAGE TEMPLATES
+   ============================================ */
+
+.page-header {
+    text-align: center;
+    max-width: 56rem;
+    margin: 0 auto 5rem;
+}
+
+.page-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--foreground);
+    margin-bottom: 1.5rem;
 }
 
 @media (min-width: 768px) {
-  .stats-grid {
-    grid-template-columns: repeat(4, 1fr);
-  }
+    .page-title {
+        font-size: 3rem;
+    }
+}
+
+@media (min-width: 1024px) {
+    .page-title {
+        font-size: 3.75rem;
+    }
+}
+
+.page-description {
+    font-size: 1.25rem;
+    color: var(--muted-foreground);
+    line-height: 1.625;
+}
+
+/* Stats Section */
+.stats-section {
+    padding: 4rem 0;
+    background: rgba(var(--primary-rgb), 0.02);
 }
 
 .stat-item {
-  text-align: center;
+    text-align: center;
 }
 
-.stat-number {
-  font-size: 2.25rem;
-  font-weight: 700;
-  color: var(--primary);
-  margin-bottom: 0.5rem;
+.stat-value {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--primary);
+    margin-bottom: 0.5rem;
 }
 
 @media (min-width: 768px) {
-  .stat-number {
-    font-size: 3rem;
-  }
+    .stat-value {
+        font-size: 3rem;
+    }
 }
 
 .stat-label {
-  color: var(--muted-foreground);
+    color: var(--muted-foreground);
 }
 
-.story-section {
-  padding: 5rem 0;
-  background-color: rgba(38, 38, 38, 0.3);
+/* Contact Info Card */
+.contact-card {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 1.5rem;
+    transition: transform 0.3s ease;
 }
 
-.story-content {
-  max-width: 56rem;
-  margin: 0 auto;
+.contact-card:hover {
+    transform: scale(1.05);
 }
 
-.story-card {
-  padding: 2rem;
-  border-radius: var(--radius-2xl);
+.contact-icon {
+    width: 3.5rem;
+    height: 3.5rem;
+    background: rgba(var(--primary-rgb), 0.1);
+    border-radius: var(--radius-xl);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary);
+    flex-shrink: 0;
 }
 
-@media (min-width: 768px) {
-  .story-card {
-    padding: 3rem;
-  }
+.contact-icon svg {
+    width: 1.5rem;
+    height: 1.5rem;
 }
 
-.story-card p {
-  font-size: 1.125rem;
-  color: var(--muted-foreground);
-  line-height: 1.8;
-  margin-bottom: 1.5rem;
+.contact-title {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--foreground);
+    margin-bottom: 0.25rem;
 }
 
-.story-card p:last-child {
-  margin-bottom: 0;
+.contact-value {
+    color: var(--muted-foreground);
 }
 
-/* ============================================
-   CONTACT PAGE
-   ============================================ */
-
-.contact-section {
-  padding-top: 8rem;
-  padding-bottom: 5rem;
+.contact-value a:hover {
+    color: var(--primary);
 }
 
-.contact-grid {
-  display: grid;
-  gap: 3rem;
+/* Social Links */
+.social-links-grid {
+    display: flex;
+    gap: 1rem;
 }
 
-@media (min-width: 1024px) {
-  .contact-grid {
-    grid-template-columns: 1fr 1fr;
-  }
+.social-btn {
+    width: 3rem;
+    height: 3rem;
+    background: rgba(var(--primary-rgb), 0.1);
+    border-radius: var(--radius-xl);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--foreground);
+    transition: all var(--transition-fast);
 }
 
-.contact-form-wrapper {
-  padding: 2rem;
-  border-radius: var(--radius-2xl);
+.social-btn:hover {
+    background: var(--primary);
+    color: var(--primary-foreground);
 }
 
-@media (min-width: 768px) {
-  .contact-form-wrapper {
-    padding: 3rem;
-  }
+/* Map */
+.map-container {
+    overflow: hidden;
+    border-radius: var(--radius-xl);
 }
 
-.contact-form-title {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: var(--foreground);
-  margin-bottom: 2rem;
+.map-container iframe {
+    filter: grayscale(100%);
 }
 
-.contact-form {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
-
-.form-row {
-  display: grid;
-  gap: 1.5rem;
-}
-
-@media (min-width: 768px) {
-  .form-row {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-.contact-info-list {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
-
-.contact-info-item {
-  display: flex;
-  align-items: center;
-  gap: 1.5rem;
-  padding: 1.5rem;
-  border-radius: var(--radius-2xl);
-  transition: transform var(--transition-normal);
-}
-
-.contact-info-item:hover {
-  transform: scale(1.05);
-}
-
-.contact-info-icon {
-  width: 3.5rem;
-  height: 3.5rem;
-  background: rgba(var(--primary-rgb), 0.1);
-  border-radius: var(--radius-2xl);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.contact-info-icon svg {
-  width: 1.5rem;
-  height: 1.5rem;
-  color: var(--primary);
-}
-
-.contact-info-title {
-  font-size: 1.125rem;
-  font-weight: 700;
-  color: var(--foreground);
-  margin-bottom: 0.25rem;
-}
-
-.contact-info-value {
-  color: var(--muted-foreground);
-}
-
-.contact-social {
-  padding: 1.5rem;
-  border-radius: var(--radius-2xl);
-}
-
-.contact-social-title {
-  font-size: 1.125rem;
-  font-weight: 700;
-  color: var(--foreground);
-  margin-bottom: 1rem;
-}
-
-.contact-social-links {
-  display: flex;
-  gap: 1rem;
-}
-
-.contact-social-link {
-  width: 3rem;
-  height: 3rem;
-  background: rgba(var(--primary-rgb), 0.1);
-  border-radius: var(--radius-xl);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all var(--transition-fast);
-}
-
-.contact-social-link:hover {
-  background-color: var(--primary);
-  color: var(--primary-foreground);
-}
-
-/* ============================================
-   SHOP PAGE
-   ============================================ */
-
-.shop-hero {
-  padding-top: 8rem;
-  padding-bottom: 3rem;
-  text-align: center;
-}
-
+/* Shop Filters */
 .shop-filters {
-  margin-bottom: 3rem;
-}
-
-.filters-wrapper {
-  padding: 1.5rem;
-  border-radius: var(--radius-2xl);
-}
-
-.filters-content {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-  align-items: center;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
 }
 
 @media (min-width: 1024px) {
-  .filters-content {
-    flex-direction: row;
-    justify-content: space-between;
-  }
+    .shop-filters {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+    }
 }
 
 .search-wrapper {
-  position: relative;
-  width: 100%;
-}
-
-@media (min-width: 1024px) {
-  .search-wrapper {
-    width: 24rem;
-  }
+    position: relative;
+    width: 100%;
+    max-width: 24rem;
 }
 
 .search-icon {
-  position: absolute;
-  right: 1rem;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 1.25rem;
-  height: 1.25rem;
-  color: var(--muted-foreground);
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 1.25rem;
+    height: 1.25rem;
+    color: var(--muted-foreground);
 }
 
 .search-input {
-  padding-right: 3rem;
+    padding-right: 3rem;
 }
 
-.category-filters {
-  display: none;
-  flex-wrap: wrap;
-  gap: 0.75rem;
-}
-
-@media (min-width: 1024px) {
-  .category-filters {
+.filter-buttons {
     display: flex;
-  }
+    flex-wrap: wrap;
+    gap: 0.75rem;
 }
 
-.category-filter-btn {
-  padding: 0.5rem 1rem;
-  border-radius: var(--radius-xl);
-  font-weight: 500;
-  transition: all var(--transition-normal);
+.filter-btn {
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius-xl);
+    font-weight: 500;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    background: var(--secondary);
+    color: var(--foreground);
+    border: none;
 }
 
-.category-filter-btn.active {
-  background-color: var(--primary);
-  color: var(--primary-foreground);
+.filter-btn:hover {
+    background: var(--secondary);
+    opacity: 0.8;
 }
 
-.category-filter-btn:not(.active) {
-  background-color: var(--secondary);
-  color: var(--foreground);
+.filter-btn.active {
+    background: var(--primary);
+    color: var(--primary-foreground);
 }
 
-.category-filter-btn:not(.active):hover {
-  background-color: hsl(0, 0%, 18%);
-}
-
-.mobile-filter-toggle {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 1rem;
-  border-radius: var(--radius-xl);
-  background-color: var(--secondary);
-  color: var(--foreground);
-}
-
-@media (min-width: 1024px) {
-  .mobile-filter-toggle {
-    display: none;
-  }
-}
-
-.mobile-filters {
-  display: none;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-top: 1.5rem;
-}
-
-.mobile-filters.active {
-  display: flex;
-}
-
-@media (min-width: 1024px) {
-  .mobile-filters {
-    display: none !important;
-  }
-}
-
-.shop-products-grid {
-  display: grid;
-  gap: 1.5rem;
-}
-
-@media (min-width: 640px) {
-  .shop-products-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (min-width: 1024px) {
-  .shop-products-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-
-@media (min-width: 1280px) {
-  .shop-products-grid {
-    grid-template-columns: repeat(4, 1fr);
-  }
-}
-
-/* ============================================
-   CART PAGE
-   ============================================ */
-
-.cart-section {
-  padding-top: 8rem;
-  padding-bottom: 5rem;
-}
-
-.cart-title {
-  font-size: 1.875rem;
-  font-weight: 700;
-  color: var(--foreground);
-  margin-bottom: 2rem;
-}
-
-@media (min-width: 768px) {
-  .cart-title {
-    font-size: 2.25rem;
-  }
-}
-
-.cart-grid {
-  display: grid;
-  gap: 2rem;
-}
-
-@media (min-width: 1024px) {
-  .cart-grid {
-    grid-template-columns: 2fr 1fr;
-  }
-}
-
-.cart-items {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
-
+/* Cart Item */
 .cart-item {
-  padding: 1.5rem;
-  border-radius: var(--radius-2xl);
-}
-
-.cart-item-content {
-  display: flex;
-  gap: 1.5rem;
+    display: flex;
+    gap: 1.5rem;
+    padding: 1.5rem;
 }
 
 .cart-item-image {
-  width: 6rem;
-  height: 6rem;
-  background-color: rgba(38, 38, 38, 0.2);
-  border-radius: var(--radius-xl);
-  overflow: hidden;
-  flex-shrink: 0;
+    width: 6rem;
+    height: 6rem;
+    background: rgba(var(--primary-rgb), 0.02);
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+    flex-shrink: 0;
 }
 
 @media (min-width: 768px) {
-  .cart-item-image {
-    width: 8rem;
-    height: 8rem;
-  }
+    .cart-item-image {
+        width: 8rem;
+        height: 8rem;
+    }
 }
 
 .cart-item-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  padding: 0.5rem;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    padding: 0.5rem;
 }
 
 .cart-item-info {
-  flex: 1;
-  min-width: 0;
-}
-
-.cart-item-header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 1rem;
+    flex: 1;
+    min-width: 0;
 }
 
 .cart-item-title {
-  font-size: 1.125rem;
-  font-weight: 700;
-  color: var(--foreground);
-  transition: color var(--transition-fast);
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--foreground);
+    transition: color var(--transition-fast);
 }
 
 .cart-item-title:hover {
-  color: var(--primary);
+    color: var(--primary);
 }
 
-.cart-item-footer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-top: 1rem;
+.cart-item-color {
+    color: var(--muted-foreground);
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
 }
 
-.quantity-controls {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
+.cart-item-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 1rem;
+}
+
+.quantity-control {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
 }
 
 .quantity-btn {
-  width: 2.5rem;
-  height: 2.5rem;
-  border-radius: var(--radius-xl);
-  background-color: var(--secondary);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background-color var(--transition-fast);
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: var(--radius-xl);
+    background: var(--secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color var(--transition-fast);
+    cursor: pointer;
+    border: none;
+    color: var(--foreground);
 }
 
 .quantity-btn:hover {
-  background-color: hsl(0, 0%, 18%);
+    background: rgba(var(--primary-rgb), 0.2);
 }
 
 .quantity-value {
-  font-size: 1.125rem;
-  font-weight: 700;
-  width: 2rem;
-  text-align: center;
+    font-size: 1.125rem;
+    font-weight: 700;
+    width: 2rem;
+    text-align: center;
 }
 
 .cart-item-price {
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: var(--primary);
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--primary);
 }
 
-.cart-summary {
-  position: sticky;
-  top: 8rem;
+.remove-btn {
+    color: var(--muted-foreground);
+    transition: color var(--transition-fast);
+    background: none;
+    border: none;
+    cursor: pointer;
 }
 
-.cart-summary-wrapper {
-  padding: 1.5rem;
-  border-radius: var(--radius-2xl);
+.remove-btn:hover {
+    color: var(--destructive);
 }
 
-.cart-summary-title {
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: var(--foreground);
-  margin-bottom: 1.5rem;
+/* Order Summary */
+.order-summary {
+    padding: 1.5rem;
 }
 
-.summary-details {
-  border-top: 1px solid var(--border);
-  padding-top: 1.5rem;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
+.summary-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--foreground);
+    margin-bottom: 1.5rem;
+}
+
+.discount-form {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
 }
 
 .summary-row {
-  display: flex;
-  justify-content: space-between;
-  color: var(--muted-foreground);
+    display: flex;
+    justify-content: space-between;
+    color: var(--muted-foreground);
+    margin-bottom: 1rem;
 }
 
 .summary-total {
-  display: flex;
-  justify-content: space-between;
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: var(--foreground);
+    display: flex;
+    justify-content: space-between;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--foreground);
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
 }
 
 .summary-total-value {
-  color: var(--primary);
+    color: var(--primary);
 }
 
-/* ============================================
-   PROFILE PAGE
-   ============================================ */
-
-.profile-section {
-  padding-top: 8rem;
-  padding-bottom: 5rem;
+.free-shipping-note {
+    font-size: 0.875rem;
+    color: #22c55e;
+    margin-bottom: 1rem;
 }
 
-.profile-title {
-  font-size: 1.875rem;
-  font-weight: 700;
-  color: var(--foreground);
-  margin-bottom: 2rem;
-}
-
-@media (min-width: 768px) {
-  .profile-title {
-    font-size: 2.25rem;
-  }
-}
-
-.profile-grid {
-  display: grid;
-  gap: 2rem;
-}
-
-@media (min-width: 1024px) {
-  .profile-grid {
-    grid-template-columns: 1fr 3fr;
-  }
-}
-
+/* Profile Sidebar */
 .profile-sidebar {
-  padding: 1.5rem;
-  border-radius: var(--radius-2xl);
+    padding: 1.5rem;
 }
 
 .profile-user {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  padding-bottom: 1.5rem;
-  border-bottom: 1px solid var(--border);
-  margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 1.5rem;
 }
 
 .profile-avatar {
-  width: 4rem;
-  height: 4rem;
-  background: rgba(var(--primary-rgb), 0.1);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+    width: 4rem;
+    height: 4rem;
+    background: rgba(var(--primary-rgb), 0.1);
+    border-radius: 9999px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary);
 }
 
 .profile-avatar svg {
-  width: 2rem;
-  height: 2rem;
-  color: var(--primary);
+    width: 2rem;
+    height: 2rem;
 }
 
-.profile-user-name {
-  font-weight: 700;
-  color: var(--foreground);
+.profile-name {
+    font-weight: 700;
+    color: var(--foreground);
 }
 
-.profile-user-phone {
-  font-size: 0.875rem;
-  color: var(--muted-foreground);
+.profile-phone {
+    font-size: 0.875rem;
+    color: var(--muted-foreground);
 }
 
 .profile-menu {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
 }
 
 .profile-menu-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0.75rem;
-  border-radius: var(--radius-xl);
-  color: var(--muted-foreground);
-  transition: all var(--transition-fast);
-  cursor: pointer;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem;
+    border-radius: var(--radius-xl);
+    transition: all var(--transition-fast);
+    color: var(--muted-foreground);
+    background: none;
+    border: none;
+    cursor: pointer;
+    text-align: right;
 }
 
-.profile-menu-item:hover,
+.profile-menu-item:hover {
+    background: var(--secondary);
+}
+
 .profile-menu-item.active {
-  background: rgba(var(--primary-rgb), 0.1);
-  color: var(--primary);
+    background: rgba(var(--primary-rgb), 0.1);
+    color: var(--primary);
 }
 
 .profile-menu-item-content {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
 }
 
-.profile-menu-item svg {
-  width: 1.25rem;
-  height: 1.25rem;
+/* Order Card */
+.order-card {
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
 }
 
-.profile-content {
-  padding: 2rem;
-  border-radius: var(--radius-2xl);
+.order-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
 }
 
-.profile-content-title {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: var(--foreground);
-  margin-bottom: 1.5rem;
+.order-id {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
 }
 
-.profile-form-grid {
-  display: grid;
-  gap: 1.5rem;
+.order-id-label {
+    color: var(--muted-foreground);
 }
 
-@media (min-width: 768px) {
-  .profile-form-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
+.order-id-value {
+    font-weight: 700;
+    color: var(--foreground);
 }
 
-.profile-tab-content {
-  display: none;
+.order-status {
+    font-weight: 500;
 }
 
-.profile-tab-content.active {
-  display: block;
+.order-status.delivered {
+    color: #22c55e;
 }
 
-/* ============================================
-   PRODUCT DETAIL PAGE
-   ============================================ */
-
-.product-detail-section {
-  padding-top: 8rem;
-  padding-bottom: 5rem;
-  position: relative;
+.order-status.shipping {
+    color: var(--primary);
 }
 
-.breadcrumb {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 0.875rem;
-  color: var(--muted-foreground);
-  margin-bottom: 2rem;
+.order-items {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
 }
 
-.breadcrumb a {
-  transition: color var(--transition-fast);
+.order-item-image {
+    width: 4rem;
+    height: 4rem;
+    background: rgba(var(--primary-rgb), 0.02);
+    border-radius: var(--radius-xl);
+    overflow: hidden;
 }
 
-.breadcrumb a:hover {
-  color: var(--primary);
+.order-item-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    padding: 0.5rem;
 }
 
-.breadcrumb .current {
-  color: var(--foreground);
+.order-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
 }
 
-.product-detail-grid {
-  display: grid;
-  gap: 3rem;
-  position: relative;
-  z-index: 10;
+.order-date {
+    color: var(--muted-foreground);
 }
 
-@media (min-width: 1024px) {
-  .product-detail-grid {
-    grid-template-columns: 1fr 1fr;
-    gap: 5rem;
-  }
+.order-total {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--primary);
 }
 
-.product-detail-image-wrapper {
-  position: relative;
-  padding: 2rem;
-  border-radius: var(--radius-2xl);
-  overflow: hidden;
+/* Wishlist Item */
+.wishlist-item {
+    display: flex;
+    gap: 1rem;
+    padding: 1.5rem;
 }
 
+.wishlist-image {
+    width: 6rem;
+    height: 6rem;
+    background: rgba(var(--primary-rgb), 0.02);
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.wishlist-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    padding: 0.5rem;
+}
+
+.wishlist-info {
+    flex: 1;
+}
+
+.wishlist-title {
+    font-weight: 700;
+    color: var(--foreground);
+    margin-bottom: 0.5rem;
+}
+
+.wishlist-price {
+    font-weight: 700;
+    color: var(--primary);
+}
+
+/* Address Card */
+.address-card {
+    padding: 1.5rem;
+}
+
+.address-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+}
+
+.address-badge {
+    background: rgba(var(--primary-rgb), 0.1);
+    color: var(--primary);
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 9999px;
+    margin-left: 0.5rem;
+}
+
+.address-title {
+    font-weight: 700;
+    color: var(--foreground);
+}
+
+.address-text {
+    color: var(--muted-foreground);
+    margin-top: 0.5rem;
+}
+
+.address-contact {
+    color: var(--muted-foreground);
+    margin-top: 0.25rem;
+}
+
+/* Settings */
+.settings-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--border);
+}
+
+.settings-item:last-child {
+    border-bottom: none;
+}
+
+.settings-label {
+    font-weight: 700;
+    color: var(--foreground);
+}
+
+.settings-description {
+    font-size: 0.875rem;
+    color: var(--muted-foreground);
+}
+
+.settings-toggle {
+    width: 1.25rem;
+    height: 1.25rem;
+    accent-color: var(--primary);
+}
+
+/* Product Detail */
 .product-detail-image {
-  position: relative;
-  z-index: 10;
-  aspect-ratio: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: transform var(--transition-normal);
+    position: relative;
+    padding: 2rem;
+    overflow: hidden;
 }
 
-.product-detail-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  filter: drop-shadow(0 25px 25px rgba(0, 0, 0, 0.15));
+.product-detail-img {
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: contain;
+    transition: transform 0.3s ease;
 }
 
 .product-detail-info {
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
-}
-
-.product-detail-title {
-  font-size: 1.875rem;
-  font-weight: 700;
-  color: var(--foreground);
-  margin-bottom: 1rem;
-}
-
-@media (min-width: 768px) {
-  .product-detail-title {
-    font-size: 2.25rem;
-  }
-}
-
-@media (min-width: 1024px) {
-  .product-detail-title {
-    font-size: 3rem;
-  }
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
 }
 
 .product-rating {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
 }
 
-.product-rating-stars {
-  display: flex;
-  gap: 0.25rem;
+.rating-stars {
+    display: flex;
+    gap: 0.25rem;
+    color: #facc15;
 }
 
-.product-rating-star {
-  width: 1.25rem;
-  height: 1.25rem;
+.rating-value {
+    font-weight: 600;
+    color: var(--foreground);
 }
 
-.product-rating-star.filled {
-  color: #facc15;
-  fill: #facc15;
-}
-
-.product-detail-description {
-  font-size: 1.125rem;
-  color: var(--muted-foreground);
-  line-height: 1.8;
+.rating-count {
+    color: var(--muted-foreground);
 }
 
 .product-price-card {
-  padding: 1.5rem;
-  border-radius: var(--radius-2xl);
+    padding: 1.5rem;
 }
 
-.product-price-main {
-  display: flex;
-  align-items: baseline;
-  gap: 1rem;
-  margin-bottom: 1rem;
-}
-
-.product-price-value {
-  font-size: 2.25rem;
-  font-weight: 700;
-  color: var(--primary);
-}
-
-.product-price-currency {
-  font-size: 1.125rem;
-  color: var(--muted-foreground);
+.product-current-price {
+    font-size: 2.25rem;
+    font-weight: 700;
+    color: var(--primary);
 }
 
 .product-stock {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin-top: 1rem;
-  color: hsl(142, 76%, 36%);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #22c55e;
+    margin-top: 1rem;
 }
 
-.product-stock svg {
-  width: 1.25rem;
-  height: 1.25rem;
+.color-selector {
+    padding: 1.5rem;
 }
 
-.product-color-card {
-  padding: 1.5rem;
-  border-radius: var(--radius-2xl);
+.color-selector-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--foreground);
+    margin-bottom: 1rem;
 }
 
-.product-color-title {
-  font-size: 1.125rem;
-  font-weight: 600;
-  color: var(--foreground);
-  margin-bottom: 1rem;
+.color-options {
+    display: flex;
+    gap: 1rem;
 }
 
-.product-color-options {
-  display: flex;
-  gap: 1rem;
+.color-option {
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--radius-xl);
+    border: 2px solid var(--border);
+    color: var(--muted-foreground);
+    background: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
 }
 
-.product-color-btn {
-  padding: 0.75rem 1.5rem;
-  border-radius: var(--radius-xl);
-  border: 2px solid var(--border);
-  color: var(--muted-foreground);
-  transition: all var(--transition-normal);
+.color-option:hover {
+    border-color: rgba(var(--primary-rgb), 0.5);
 }
 
-.product-color-btn:hover {
-  border-color: rgba(var(--primary-rgb), 0.5);
+.color-option.active {
+    border-color: var(--primary);
+    background: rgba(var(--primary-rgb), 0.1);
+    color: var(--primary);
 }
 
-.product-color-btn.selected {
-  border-color: var(--primary);
-  background: rgba(var(--primary-rgb), 0.1);
-  color: var(--primary);
-  transform: scale(1.05);
-}
-
-.product-cta-wrapper {
-  display: flex;
-  gap: 1rem;
-}
-
-.product-cta-wrapper .btn {
-  flex: 1;
-  height: 3.5rem;
-  font-size: 1.125rem;
+.product-cta {
+    display: flex;
+    gap: 1rem;
 }
 
 .product-features {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1rem;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
 }
 
-.product-feature {
-  text-align: center;
-  padding: 1rem;
-  border-radius: var(--radius-2xl);
-  transition: transform var(--transition-normal);
+.feature-card {
+    padding: 1rem;
+    text-align: center;
+    transition: transform 0.3s ease;
 }
 
-.product-feature:hover {
-  transform: scale(1.05);
+.feature-card:hover {
+    transform: scale(1.05);
 }
 
-.product-feature-icon {
-  width: 2rem;
-  height: 2rem;
-  color: var(--primary);
-  margin: 0 auto 0.5rem;
+.feature-icon {
+    width: 2rem;
+    height: 2rem;
+    color: var(--primary);
+    margin: 0 auto 0.5rem;
 }
 
-.product-feature-text {
-  font-size: 0.875rem;
-  color: var(--muted-foreground);
+.feature-text {
+    font-size: 0.875rem;
+    color: var(--muted-foreground);
+}
+
+.specs-card {
+    padding: 1.5rem;
+}
+
+.specs-toggle {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--foreground);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+}
+
+.specs-toggle-icon {
+    width: 1.5rem;
+    height: 1.5rem;
+    color: var(--primary);
+    transition: transform 0.3s ease;
+}
+
+.specs-toggle-icon.open {
+    transform: rotate(180deg);
+}
+
+.specs-list {
+    display: grid;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+}
+
+@media (min-width: 768px) {
+    .specs-list {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+.spec-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.75rem;
+    background: var(--secondary);
+    border-radius: var(--radius);
+}
+
+.spec-label {
+    color: var(--muted-foreground);
+}
+
+.spec-value {
+    font-weight: 500;
+    color: var(--foreground);
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+}
+
+.empty-icon {
+    width: 6rem;
+    height: 6rem;
+    background: var(--secondary);
+    border-radius: 9999px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 2rem;
+}
+
+.empty-icon svg {
+    width: 3rem;
+    height: 3rem;
+    color: var(--muted-foreground);
+}
+
+.empty-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--foreground);
+    margin-bottom: 1rem;
+}
+
+.empty-text {
+    color: var(--muted-foreground);
+    margin-bottom: 2rem;
 }
 
 /* ============================================
    ANIMATIONS
    ============================================ */
 
-.animate-fade-in {
-  animation: fadeIn 0.6s ease-out forwards;
-}
-
-.animate-fade-up {
-  animation: fadeUp 0.6s ease-out forwards;
-}
-
-.animate-scale-in {
-  animation: scaleIn 0.5s ease-out forwards;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
 @keyframes fadeUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 @keyframes scaleIn {
-  from {
-    opacity: 0;
-    transform: scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
 }
 
 @keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-20px);
+    }
 }
 
-/* Animation delays */
-.delay-100 { animation-delay: 0.1s; }
-.delay-200 { animation-delay: 0.2s; }
-.delay-300 { animation-delay: 0.3s; }
-.delay-400 { animation-delay: 0.4s; }
-.delay-500 { animation-delay: 0.5s; }
+@keyframes pulse-glow {
+    0%, 100% {
+        box-shadow: 0 0 20px rgba(var(--primary-rgb), 0.3);
+    }
+    50% {
+        box-shadow: 0 0 40px rgba(var(--primary-rgb), 0.5);
+    }
+}
+
+.animate-fade-up {
+    animation: fadeUp 0.6s ease-out forwards;
+}
+
+.animate-scale-in {
+    animation: scaleIn 0.5s ease-out forwards;
+}
+
+.animate-slide-in {
+    animation: slideIn 0.5s ease-out forwards;
+}
+
+.animate-float {
+    animation: float 3s ease-in-out infinite;
+}
+
+.animate-pulse-glow {
+    animation: pulse-glow 2s ease-in-out infinite;
+}
+
+/* Scroll Animation Classes */
+.scroll-animate {
+    opacity: 0;
+}
+
+.scroll-animate.animate-fade-up {
+    transform: translateY(30px);
+}
+
+.scroll-animate.animate-scale-in {
+    transform: scale(0.9);
+}
+
+.scroll-animate.animate-slide-in {
+    transform: translateX(30px);
+}
+
+.scroll-animate.visible {
+    opacity: 1;
+    transform: translateY(0) scale(1) translateX(0);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
 
 /* ============================================
-   WOOCOMMERCE COMPATIBILITY
+   WOOCOMMERCE OVERRIDES
    ============================================ */
 
-.woocommerce-page .products .product {
-  background-color: var(--card);
-  border-radius: var(--radius-2xl);
-  overflow: hidden;
+.woocommerce .products {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
 }
 
-.woocommerce .star-rating {
-  color: #facc15;
+@media (min-width: 768px) {
+    .woocommerce .products {
+        grid-template-columns: repeat(3, 1fr);
+    }
 }
 
-.woocommerce a.button,
-.woocommerce button.button,
-.woocommerce input.button {
-  background-color: var(--primary) !important;
-  color: var(--primary-foreground) !important;
-  border-radius: var(--radius-xl) !important;
+@media (min-width: 1024px) {
+    .woocommerce .products {
+        grid-template-columns: repeat(4, 1fr);
+    }
 }
 
-.woocommerce a.button:hover,
-.woocommerce button.button:hover,
-.woocommerce input.button:hover {
-  background-color: hsl(24, 95%, 48%) !important;
+.woocommerce .product {
+    background: rgba(26, 26, 26, 0.4);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.woocommerce .product:hover {
+    background: rgba(26, 26, 26, 0.6);
+    border-color: rgba(var(--primary-rgb), 0.3);
+}
+
+.woocommerce .product img {
+    aspect-ratio: 1;
+    object-fit: contain;
+    padding: 1rem;
+    background: rgba(var(--primary-rgb), 0.02);
+}
+
+.woocommerce .product .woocommerce-loop-product__title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--foreground);
+    padding: 1rem 1rem 0.5rem;
+}
+
+.woocommerce .product .price {
+    padding: 0 1rem 1rem;
+    color: var(--primary);
+    font-weight: 700;
+}
+
+.woocommerce .product .button {
+    background: var(--primary);
+    color: var(--primary-foreground);
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--radius-xl);
+    font-weight: 600;
+    margin: 0 1rem 1rem;
+    transition: all var(--transition-normal);
+}
+
+.woocommerce .product .button:hover {
+    background: hsl(24, 95%, 48%);
 }
 
 /* ============================================
-   ELEMENTOR COMPATIBILITY
+   ELEMENTOR OVERRIDES
    ============================================ */
 
-.elementor-widget {
-  --e-global-color-primary: var(--primary);
-  --e-global-color-secondary: var(--secondary);
-  --e-global-color-text: var(--foreground);
-  --e-global-color-accent: var(--primary);
+.elementor-section {
+    background-color: var(--background) !important;
+}
+
+.elementor-widget-container {
+    font-family: 'AzarMehr', 'Vazirmatn', sans-serif !important;
+}
+
+.elementor-heading-title {
+    font-family: 'AzarMehr', 'Vazirmatn', sans-serif !important;
+    color: var(--foreground) !important;
+}
+
+.elementor-text-editor {
+    color: var(--muted-foreground) !important;
 }
 
 .elementor-button {
-  background-color: var(--primary) !important;
-  border-radius: var(--radius-xl) !important;
+    background-color: var(--primary) !important;
+    border-radius: var(--radius-xl) !important;
+    font-family: 'AzarMehr', 'Vazirmatn', sans-serif !important;
 }
 
 .elementor-button:hover {
-  background-color: hsl(24, 95%, 48%) !important;
+    background-color: hsl(24, 95%, 48%) !important;
 }
     <?php
     return ob_get_clean();
@@ -2514,106 +2468,131 @@ function xiaomi_sari_get_all_js() {
 (function() {
     'use strict';
 
-    document.addEventListener('DOMContentLoaded', function() {
-        initHeader();
-        initMobileMenu();
-        initFAQ();
-        initLeadForm();
-        initScrollAnimations();
-        initProductSpecs();
-        initQuantityControls();
-        initWishlist();
-        initProfileTabs();
-        initColorSelection();
-        initCategoryFilters();
-        initSearch();
-        initAddToCart();
-        initSmoothScroll();
-    });
-
-    function initHeader() {
-        var header = document.querySelector('.site-header');
-        if (!header) return;
-
-        var scrollThreshold = 80;
-
+    // ============================================
+    // HEADER SCROLL EFFECT
+    // ============================================
+    const header = document.querySelector('.site-header');
+    if (header) {
+        let lastScroll = 0;
         window.addEventListener('scroll', function() {
-            if (window.pageYOffset > scrollThreshold) {
+            const currentScroll = window.pageYOffset;
+            if (currentScroll > 50) {
                 header.classList.add('scrolled');
             } else {
                 header.classList.remove('scrolled');
             }
+            lastScroll = currentScroll;
         }, { passive: true });
     }
 
-    function initMobileMenu() {
-        var toggleBtn = document.querySelector('.mobile-menu-toggle');
-        var mobileMenu = document.querySelector('.mobile-menu');
+    // ============================================
+    // SCROLL ANIMATIONS
+    // ============================================
+    const observerOptions = {
+        root: null,
+        rootMargin: '0px 0px -100px 0px',
+        threshold: 0.1
+    };
 
-        if (!toggleBtn || !mobileMenu) return;
+    const observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+                observer.unobserve(entry.target);
+            }
+        });
+    }, observerOptions);
 
-        toggleBtn.addEventListener('click', function() {
-            var isOpen = mobileMenu.classList.contains('active');
+    document.querySelectorAll('.scroll-animate').forEach(function(el) {
+        observer.observe(el);
+    });
+
+    // ============================================
+    // 3D TILT EFFECT FOR PRODUCT IMAGES
+    // ============================================
+    document.querySelectorAll('.product-tilt').forEach(function(card) {
+        card.addEventListener('mousemove', function(e) {
+            const rect = card.getBoundingClientRect();
+            const x = (e.clientX - rect.left) / rect.width - 0.5;
+            const y = (e.clientY - rect.top) / rect.height - 0.5;
+            const img = card.querySelector('img');
+            if (img) {
+                img.style.transform = 'perspective(1000px) rotateY(' + (x * 20) + 'deg) rotateX(' + (-y * 20) + 'deg) scale(1.05)';
+            }
+        });
+        card.addEventListener('mouseleave', function() {
+            const img = card.querySelector('img');
+            if (img) {
+                img.style.transform = 'perspective(1000px) rotateY(0) rotateX(0) scale(1)';
+            }
+        });
+    });
+
+    // ============================================
+    // FAQ ACCORDION
+    // ============================================
+    document.querySelectorAll('.faq-question').forEach(function(question) {
+        question.addEventListener('click', function() {
+            const item = this.closest('.faq-item');
+            const isOpen = item.classList.contains('open');
             
-            mobileMenu.classList.toggle('active');
-            toggleBtn.setAttribute('aria-expanded', !isOpen);
-
-            var spans = toggleBtn.querySelectorAll('span');
-            spans.forEach(function(span, index) {
-                if (isOpen) {
-                    span.style.transform = '';
-                    span.style.opacity = '';
-                } else {
-                    if (index === 0) span.style.transform = 'translateY(8px) rotate(45deg)';
-                    if (index === 1) span.style.opacity = '0';
-                    if (index === 2) span.style.transform = 'translateY(-8px) rotate(-45deg)';
-                }
+            // Close all other items
+            document.querySelectorAll('.faq-item').forEach(function(faq) {
+                faq.classList.remove('open');
             });
+            
+            // Toggle current item
+            if (!isOpen) {
+                item.classList.add('open');
+            }
         });
+    });
 
-        var menuLinks = mobileMenu.querySelectorAll('a');
-        menuLinks.forEach(function(link) {
-            link.addEventListener('click', function() {
-                mobileMenu.classList.remove('active');
-            });
-        });
-    }
-
-    function initFAQ() {
-        var faqItems = document.querySelectorAll('.faq-item');
-
-        faqItems.forEach(function(item) {
-            var question = item.querySelector('.faq-question');
-
-            if (!question) return;
-
-            question.addEventListener('click', function() {
-                faqItems.forEach(function(otherItem) {
-                    if (otherItem !== item) {
-                        otherItem.classList.remove('active');
-                    }
-                });
-                item.classList.toggle('active');
-            });
-        });
-    }
-
-    function initLeadForm() {
-        var form = document.getElementById('xiaomi-lead-form');
-
-        if (!form) return;
-
-        form.addEventListener('submit', function(e) {
+    // ============================================
+    // LEAD FORM SUBMISSION
+    // ============================================
+    const leadForm = document.querySelector('.lead-form');
+    if (leadForm) {
+        leadForm.addEventListener('submit', function(e) {
             e.preventDefault();
+            const phoneInput = this.querySelector('input[name="phone"]');
+            if (phoneInput && phoneInput.value) {
+                // AJAX submission
+                const formData = new FormData();
+                formData.append('action', 'xiaomi_sari_lead_form');
+                formData.append('phone', phoneInput.value);
+                formData.append('nonce', xiaomiSari.nonce);
 
-            var formData = new FormData(form);
-            formData.append('action', 'xiaomi_sari_submit_lead');
+                fetch(xiaomiSari.ajaxUrl, {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(function(response) { return response.json(); })
+                .then(function(data) {
+                    if (data.success) {
+                        showNotification('شماره شما با موفقیت ثبت شد!', 'success');
+                        phoneInput.value = '';
+                    } else {
+                        showNotification('خطا در ثبت شماره', 'error');
+                    }
+                })
+                .catch(function() {
+                    showNotification('خطا در ارتباط با سرور', 'error');
+                });
+            }
+        });
+    }
+
+    // ============================================
+    // CONTACT FORM SUBMISSION
+    // ============================================
+    const contactForm = document.querySelector('.contact-form');
+    if (contactForm) {
+        contactForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            formData.append('action', 'xiaomi_sari_contact_form');
             formData.append('nonce', xiaomiSari.nonce);
-
-            var submitBtn = form.querySelector('button[type="submit"]');
-            var originalText = submitBtn.textContent;
-            submitBtn.textContent = 'در حال ارسال...';
-            submitBtn.disabled = true;
 
             fetch(xiaomiSari.ajaxUrl, {
                 method: 'POST',
@@ -2622,250 +2601,69 @@ function xiaomi_sari_get_all_js() {
             .then(function(response) { return response.json(); })
             .then(function(data) {
                 if (data.success) {
-                    showToast(data.data.message, 'success');
-                    form.reset();
+                    showNotification('پیام شما با موفقیت ارسال شد!', 'success');
+                    contactForm.reset();
                 } else {
-                    showToast(data.data.message, 'error');
+                    showNotification('خطا در ارسال پیام', 'error');
                 }
             })
             .catch(function() {
-                showToast('خطا در ارسال درخواست. لطفا دوباره تلاش کنید.', 'error');
-            })
-            .finally(function() {
-                submitBtn.textContent = originalText;
-                submitBtn.disabled = false;
+                showNotification('خطا در ارتباط با سرور', 'error');
             });
         });
     }
 
-    function initScrollAnimations() {
-        var animatedElements = document.querySelectorAll('[data-animate]');
-
-        if (!animatedElements.length) return;
-
-        var observer = new IntersectionObserver(function(entries) {
-            entries.forEach(function(entry) {
-                if (entry.isIntersecting) {
-                    var element = entry.target;
-                    var animation = element.dataset.animate;
-                    var delay = element.dataset.animateDelay || 0;
-
-                    setTimeout(function() {
-                        element.classList.add('animate-' + animation);
-                        element.style.opacity = '1';
-                    }, delay);
-
-                    observer.unobserve(element);
-                }
-            });
-        }, {
-            threshold: 0.1,
-            rootMargin: '0px 0px -50px 0px'
-        });
-
-        animatedElements.forEach(function(element) {
-            element.style.opacity = '0';
-            observer.observe(element);
-        });
-    }
-
-    function initProductSpecs() {
-        var specsCard = document.querySelector('.product-specs-card');
-
-        if (!specsCard) return;
-
-        var header = specsCard.querySelector('.product-specs-header');
-        var content = specsCard.querySelector('.product-specs-content');
-        var toggle = specsCard.querySelector('.product-specs-toggle');
-
-        header.addEventListener('click', function() {
-            content.classList.toggle('open');
-            toggle.classList.toggle('open');
-        });
-    }
-
-    function initQuantityControls() {
-        var quantityControls = document.querySelectorAll('.quantity-controls');
-
-        quantityControls.forEach(function(control) {
-            var minusBtn = control.querySelector('[data-action="minus"]');
-            var plusBtn = control.querySelector('[data-action="plus"]');
-            var valueDisplay = control.querySelector('.quantity-value');
-
-            if (!minusBtn || !plusBtn || !valueDisplay) return;
-
-            minusBtn.addEventListener('click', function() {
-                var value = parseInt(valueDisplay.textContent);
-                if (value > 1) {
-                    value--;
-                    valueDisplay.textContent = value;
-                }
-            });
-
-            plusBtn.addEventListener('click', function() {
-                var value = parseInt(valueDisplay.textContent);
-                value++;
-                valueDisplay.textContent = value;
-            });
-        });
-    }
-
-    function initWishlist() {
-        var wishlistBtns = document.querySelectorAll('[data-wishlist]');
-
-        wishlistBtns.forEach(function(btn) {
-            btn.addEventListener('click', function() {
-                var productId = btn.dataset.wishlist;
-                var isWishlisted = btn.classList.contains('wishlisted');
-
-                btn.classList.toggle('wishlisted');
-
-                var wishlist = JSON.parse(localStorage.getItem('xiaomi_wishlist') || '[]');
-                
-                if (isWishlisted) {
-                    wishlist = wishlist.filter(function(id) { return id !== productId; });
-                    showToast('از علاقه‌مندی‌ها حذف شد', 'info');
-                } else {
-                    wishlist.push(productId);
-                    showToast('به علاقه‌مندی‌ها اضافه شد', 'success');
-                }
-
-                localStorage.setItem('xiaomi_wishlist', JSON.stringify(wishlist));
-            });
-        });
-
-        var wishlist = JSON.parse(localStorage.getItem('xiaomi_wishlist') || '[]');
-        wishlist.forEach(function(productId) {
-            var btn = document.querySelector('[data-wishlist="' + productId + '"]');
-            if (btn) {
-                btn.classList.add('wishlisted');
-            }
-        });
-    }
-
-    function initProfileTabs() {
-        var menuItems = document.querySelectorAll('.profile-menu-item');
-        var tabContents = document.querySelectorAll('.profile-tab-content');
-
-        menuItems.forEach(function(item) {
-            item.addEventListener('click', function() {
-                var targetTab = item.dataset.tab;
-
-                menuItems.forEach(function(m) { m.classList.remove('active'); });
-                item.classList.add('active');
-
-                tabContents.forEach(function(content) {
-                    if (content.dataset.tab === targetTab) {
-                        content.classList.add('active');
-                        content.style.display = 'block';
-                    } else {
-                        content.classList.remove('active');
-                        content.style.display = 'none';
-                    }
-                });
-            });
-        });
-    }
-
-    function initColorSelection() {
-        var colorButtons = document.querySelectorAll('.product-color-btn');
+    // ============================================
+    // NOTIFICATION SYSTEM
+    // ============================================
+    function showNotification(message, type) {
+        type = type || 'info';
+        const notification = document.createElement('div');
+        notification.className = 'notification notification-' + type;
+        notification.style.cssText = 'position: fixed; bottom: 2rem; right: 2rem; padding: 1rem 1.5rem; border-radius: 1rem; z-index: 9999; font-weight: 500; animation: slideIn 0.3s ease;';
         
-        colorButtons.forEach(function(btn) {
-            btn.addEventListener('click', function() {
-                colorButtons.forEach(function(b) { b.classList.remove('selected'); });
-                btn.classList.add('selected');
-            });
-        });
-    }
-
-    function initCategoryFilters() {
-        var categoryFilters = document.querySelectorAll('.category-filter-btn');
-        var mobileFilterToggle = document.querySelector('.mobile-filter-toggle');
-        var mobileFilters = document.querySelector('.mobile-filters');
-
-        categoryFilters.forEach(function(btn) {
-            btn.addEventListener('click', function() {
-                categoryFilters.forEach(function(b) { b.classList.remove('active'); });
-                btn.classList.add('active');
-
-                var category = btn.dataset.category;
-                filterProducts(category);
-            });
-        });
-
-        if (mobileFilterToggle && mobileFilters) {
-            mobileFilterToggle.addEventListener('click', function() {
-                mobileFilters.classList.toggle('active');
-            });
+        if (type === 'success') {
+            notification.style.background = '#22c55e';
+            notification.style.color = '#fff';
+        } else if (type === 'error') {
+            notification.style.background = '#ef4444';
+            notification.style.color = '#fff';
+        } else {
+            notification.style.background = 'var(--primary)';
+            notification.style.color = 'var(--primary-foreground)';
         }
-    }
-
-    function filterProducts(category) {
-        var products = document.querySelectorAll('.product-card');
         
-        products.forEach(function(product) {
-            var productCategory = product.dataset.category;
-            
-            if (category === 'all' || productCategory === category) {
-                product.style.display = '';
-                product.classList.add('animate-fade-up');
-            } else {
-                product.style.display = 'none';
-            }
-        });
-    }
-
-    function initSearch() {
-        var searchInput = document.querySelector('.search-input');
+        notification.textContent = message;
+        document.body.appendChild(notification);
         
-        if (!searchInput) return;
-
-        var searchTimeout;
-        
-        searchInput.addEventListener('input', function() {
-            clearTimeout(searchTimeout);
-            
-            searchTimeout = setTimeout(function() {
-                var query = searchInput.value.toLowerCase();
-                var products = document.querySelectorAll('.product-card');
-                
-                products.forEach(function(product) {
-                    var title = product.querySelector('.product-title');
-                    if (title) {
-                        var titleText = title.textContent.toLowerCase();
-                        if (titleText.includes(query) || query === '') {
-                            product.style.display = '';
-                        } else {
-                            product.style.display = 'none';
-                        }
-                    }
-                });
+        setTimeout(function() {
+            notification.style.animation = 'fadeUp 0.3s ease reverse';
+            setTimeout(function() {
+                notification.remove();
             }, 300);
+        }, 3000);
+    }
+
+    // ============================================
+    // MOBILE MENU TOGGLE
+    // ============================================
+    const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+    const mobileMenu = document.querySelector('.mobile-menu');
+    if (mobileMenuBtn && mobileMenu) {
+        mobileMenuBtn.addEventListener('click', function() {
+            mobileMenu.classList.toggle('open');
+            document.body.classList.toggle('menu-open');
         });
     }
 
-    function initAddToCart() {
-        document.querySelectorAll('.add-to-cart').forEach(function(btn) {
-            btn.addEventListener('click', function(e) {
-                e.preventDefault();
-                
-                btn.classList.add('adding');
-                
-                setTimeout(function() {
-                    btn.classList.remove('adding');
-                    showToast('محصول به سبد خرید اضافه شد', 'success');
-                }, 500);
-            });
-        });
-    }
-
-    function initSmoothScroll() {
-        document.querySelectorAll('a[href^="#"]').forEach(function(anchor) {
-            anchor.addEventListener('click', function(e) {
-                var targetId = this.getAttribute('href');
-                if (targetId === '#') return;
-
-                var target = document.querySelector(targetId);
+    // ============================================
+    // SMOOTH SCROLL FOR ANCHOR LINKS
+    // ============================================
+    document.querySelectorAll('a[href^="#"]').forEach(function(anchor) {
+        anchor.addEventListener('click', function(e) {
+            var href = this.getAttribute('href');
+            if (href && href.length > 1) {
+                var target = document.querySelector(href);
                 if (target) {
                     e.preventDefault();
                     target.scrollIntoView({
@@ -2873,552 +2671,151 @@ function xiaomi_sari_get_all_js() {
                         block: 'start'
                     });
                 }
+            }
+        });
+    });
+
+    // ============================================
+    // QUANTITY CONTROLS
+    // ============================================
+    document.querySelectorAll('.quantity-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            const input = this.parentElement.querySelector('.quantity-value');
+            if (!input) return;
+            
+            let value = parseInt(input.textContent) || 1;
+            if (this.classList.contains('quantity-minus')) {
+                value = Math.max(1, value - 1);
+            } else if (this.classList.contains('quantity-plus')) {
+                value++;
+            }
+            input.textContent = value;
+            
+            // Trigger update event
+            const event = new CustomEvent('quantityChange', { detail: { value: value } });
+            this.parentElement.dispatchEvent(event);
+        });
+    });
+
+    // ============================================
+    // FILTER BUTTONS
+    // ============================================
+    document.querySelectorAll('.filter-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            document.querySelectorAll('.filter-btn').forEach(function(b) {
+                b.classList.remove('active');
             });
+            this.classList.add('active');
+            
+            const category = this.dataset.category;
+            filterProducts(category);
+        });
+    });
+
+    function filterProducts(category) {
+        document.querySelectorAll('.product-card').forEach(function(card) {
+            if (category === 'all' || card.dataset.category === category) {
+                card.style.display = 'block';
+            } else {
+                card.style.display = 'none';
+            }
         });
     }
 
-    function showToast(message, type) {
-        type = type || 'info';
+    // ============================================
+    // PROFILE TAB NAVIGATION
+    // ============================================
+    document.querySelectorAll('.profile-menu-item').forEach(function(item) {
+        item.addEventListener('click', function() {
+            document.querySelectorAll('.profile-menu-item').forEach(function(i) {
+                i.classList.remove('active');
+            });
+            this.classList.add('active');
+            
+            const tabId = this.dataset.tab;
+            document.querySelectorAll('.profile-tab-content').forEach(function(content) {
+                content.style.display = 'none';
+            });
+            var targetTab = document.getElementById('tab-' + tabId);
+            if (targetTab) {
+                targetTab.style.display = 'block';
+            }
+        });
+    });
+
+    // ============================================
+    // SPECS TOGGLE
+    // ============================================
+    document.querySelectorAll('.specs-toggle').forEach(function(toggle) {
+        toggle.addEventListener('click', function() {
+            const specsList = this.closest('.specs-card').querySelector('.specs-list');
+            const icon = this.querySelector('.specs-toggle-icon');
+            
+            if (specsList.style.display === 'none' || !specsList.style.display) {
+                specsList.style.display = 'grid';
+                icon.classList.add('open');
+            } else {
+                specsList.style.display = 'none';
+                icon.classList.remove('open');
+            }
+        });
+    });
+
+    // ============================================
+    // PRODUCT IMAGE TILT EFFECT
+    // ============================================
+    const productDetailImage = document.querySelector('.product-detail-image');
+    if (productDetailImage) {
+        productDetailImage.addEventListener('mousemove', function(e) {
+            const rect = this.getBoundingClientRect();
+            const x = (e.clientX - rect.left) / rect.width - 0.5;
+            const y = (e.clientY - rect.top) / rect.height - 0.5;
+            const img = this.querySelector('.product-detail-img');
+            if (img) {
+                img.style.transform = 'perspective(1000px) rotateY(' + (x * 20) + 'deg) rotateX(' + (-y * 20) + 'deg)';
+            }
+        });
         
-        var existingToast = document.querySelector('.toast');
-        if (existingToast) {
-            existingToast.remove();
-        }
-
-        var toast = document.createElement('div');
-        toast.className = 'toast toast-' + type;
-        toast.innerHTML = '<span>' + message + '</span>';
-        toast.style.cssText = 'position:fixed;bottom:100px;left:50%;transform:translateX(-50%) translateY(100px);background-color:var(--card);color:var(--foreground);padding:1rem 2rem;border-radius:var(--radius-xl);box-shadow:0 10px 40px rgba(0,0,0,0.3);z-index:9999;transition:transform 0.3s ease;border:1px solid var(--border);';
-
-        if (type === 'success') {
-            toast.style.borderColor = 'hsl(142, 76%, 36%)';
-        } else if (type === 'error') {
-            toast.style.borderColor = 'hsl(0, 62.8%, 50%)';
-        }
-
-        document.body.appendChild(toast);
-
-        requestAnimationFrame(function() {
-            toast.style.transform = 'translateX(-50%) translateY(0)';
+        productDetailImage.addEventListener('mouseleave', function() {
+            const img = this.querySelector('.product-detail-img');
+            if (img) {
+                img.style.transform = 'perspective(1000px) rotateY(0) rotateX(0)';
+            }
         });
-
-        setTimeout(function() {
-            toast.style.transform = 'translateX(-50%) translateY(100px)';
-            setTimeout(function() {
-                toast.remove();
-            }, 300);
-        }, 3000);
     }
 
-    window.showToast = showToast;
+    // ============================================
+    // COLOR SELECTOR
+    // ============================================
+    document.querySelectorAll('.color-option').forEach(function(option) {
+        option.addEventListener('click', function() {
+            document.querySelectorAll('.color-option').forEach(function(o) {
+                o.classList.remove('active');
+            });
+            this.classList.add('active');
+        });
+    });
+
+    // ============================================
+    // WISHLIST TOGGLE
+    // ============================================
+    document.querySelectorAll('.wishlist-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            this.classList.toggle('active');
+            const icon = this.querySelector('svg');
+            if (icon) {
+                icon.style.fill = this.classList.contains('active') ? 'currentColor' : 'none';
+            }
+        });
+    });
+
 })();
     <?php
     return ob_get_clean();
 }
 
 /**
- * Register Widget Areas
- */
-function xiaomi_sari_widgets_init() {
-    register_sidebar(array(
-        'name'          => __('سایدبار فروشگاه', 'xiaomi-sari'),
-        'id'            => 'shop-sidebar',
-        'description'   => __('ویجت‌های سایدبار صفحه فروشگاه', 'xiaomi-sari'),
-        'before_widget' => '<div id="%1$s" class="widget glass-card rounded-2xl p-6 mb-6 %2$s">',
-        'after_widget'  => '</div>',
-        'before_title'  => '<h3 class="widget-title text-lg font-bold text-foreground mb-4">',
-        'after_title'   => '</h3>',
-    ));
-
-    register_sidebar(array(
-        'name'          => __('فوتر ۱', 'xiaomi-sari'),
-        'id'            => 'footer-1',
-        'before_widget' => '<div id="%1$s" class="widget %2$s">',
-        'after_widget'  => '</div>',
-        'before_title'  => '<h4 class="footer-title">',
-        'after_title'   => '</h4>',
-    ));
-
-    register_sidebar(array(
-        'name'          => __('فوتر ۲', 'xiaomi-sari'),
-        'id'            => 'footer-2',
-        'before_widget' => '<div id="%1$s" class="widget %2$s">',
-        'after_widget'  => '</div>',
-        'before_title'  => '<h4 class="footer-title">',
-        'after_title'   => '</h4>',
-    ));
-}
-add_action('widgets_init', 'xiaomi_sari_widgets_init');
-
-/**
- * Theme Customizer
- */
-function xiaomi_sari_customize_register($wp_customize) {
-    // Contact Info Section
-    $wp_customize->add_section('xiaomi_sari_contact', array(
-        'title'    => __('اطلاعات تماس', 'xiaomi-sari'),
-        'priority' => 35,
-    ));
-
-    $wp_customize->add_setting('contact_phone', array(
-        'default'           => '01133333333',
-        'sanitize_callback' => 'sanitize_text_field',
-    ));
-
-    $wp_customize->add_control('contact_phone', array(
-        'label'    => __('شماره تلفن', 'xiaomi-sari'),
-        'section'  => 'xiaomi_sari_contact',
-        'type'     => 'text',
-    ));
-
-    $wp_customize->add_setting('contact_address', array(
-        'default'           => 'ساری، خیابان فرهنگ',
-        'sanitize_callback' => 'sanitize_text_field',
-    ));
-
-    $wp_customize->add_control('contact_address', array(
-        'label'    => __('آدرس', 'xiaomi-sari'),
-        'section'  => 'xiaomi_sari_contact',
-        'type'     => 'text',
-    ));
-
-    $wp_customize->add_setting('contact_hours', array(
-        'default'           => '۹ صبح تا ۹ شب',
-        'sanitize_callback' => 'sanitize_text_field',
-    ));
-
-    $wp_customize->add_control('contact_hours', array(
-        'label'    => __('ساعات کاری', 'xiaomi-sari'),
-        'section'  => 'xiaomi_sari_contact',
-        'type'     => 'text',
-    ));
-
-    // Social Media Section
-    $wp_customize->add_section('xiaomi_sari_social', array(
-        'title'    => __('شبکه‌های اجتماعی', 'xiaomi-sari'),
-        'priority' => 40,
-    ));
-
-    $wp_customize->add_setting('social_instagram', array(
-        'default'           => '',
-        'sanitize_callback' => 'esc_url_raw',
-    ));
-
-    $wp_customize->add_control('social_instagram', array(
-        'label'    => __('لینک اینستاگرام', 'xiaomi-sari'),
-        'section'  => 'xiaomi_sari_social',
-        'type'     => 'url',
-    ));
-
-    $wp_customize->add_setting('social_telegram', array(
-        'default'           => '',
-        'sanitize_callback' => 'esc_url_raw',
-    ));
-
-    $wp_customize->add_control('social_telegram', array(
-        'label'    => __('لینک تلگرام', 'xiaomi-sari'),
-        'section'  => 'xiaomi_sari_social',
-        'type'     => 'url',
-    ));
-
-    $wp_customize->add_setting('social_whatsapp', array(
-        'default'           => '',
-        'sanitize_callback' => 'esc_url_raw',
-    ));
-
-    $wp_customize->add_control('social_whatsapp', array(
-        'label'    => __('لینک واتساپ', 'xiaomi-sari'),
-        'section'  => 'xiaomi_sari_social',
-        'type'     => 'url',
-    ));
-}
-add_action('customize_register', 'xiaomi_sari_customize_register');
-
-/**
- * Helper Functions
- */
-function xiaomi_sari_get_contact_info($key = '') {
-    $contact_info = array(
-        'phone'   => get_theme_mod('contact_phone', '01133333333'),
-        'address' => get_theme_mod('contact_address', 'ساری، خیابان فرهنگ'),
-        'hours'   => get_theme_mod('contact_hours', '۹ صبح تا ۹ شب'),
-    );
-    
-    if ($key && isset($contact_info[$key])) {
-        return $contact_info[$key];
-    }
-    
-    return $contact_info;
-}
-
-function xiaomi_sari_get_social_links() {
-    return array(
-        'instagram' => get_theme_mod('social_instagram', ''),
-        'telegram'  => get_theme_mod('social_telegram', ''),
-        'whatsapp'  => get_theme_mod('social_whatsapp', ''),
-    );
-}
-
-function xiaomi_sari_format_price($price) {
-    $persian_digits = array('۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹');
-    $english_digits = array('0', '1', '2', '3', '4', '5', '6', '7', '8', '9');
-    
-    $formatted = number_format($price);
-    return str_replace($english_digits, $persian_digits, $formatted);
-}
-
-function xiaomi_sari_to_persian($string) {
-    $persian_digits = array('۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹');
-    $english_digits = array('0', '1', '2', '3', '4', '5', '6', '7', '8', '9');
-    
-    return str_replace($english_digits, $persian_digits, $string);
-}
-
-/**
- * AJAX Handler: Lead Form
- */
-function xiaomi_sari_submit_lead() {
-    check_ajax_referer('xiaomi_sari_nonce', 'nonce');
-    
-    $name  = sanitize_text_field($_POST['name'] ?? '');
-    $phone = sanitize_text_field($_POST['phone'] ?? '');
-    $email = sanitize_email($_POST['email'] ?? '');
-    $message = sanitize_textarea_field($_POST['message'] ?? '');
-    
-    if (empty($name) || empty($phone)) {
-        wp_send_json_error(array('message' => 'لطفا فیلدهای ضروری را پر کنید.'));
-    }
-    
-    $admin_email = get_option('admin_email');
-    $subject = 'درخواست جدید از فرم تماس - ' . $name;
-    $body = "نام: {$name}\nتلفن: {$phone}\nایمیل: {$email}\n\nپیام:\n{$message}";
-    
-    $sent = wp_mail($admin_email, $subject, $body);
-    
-    if ($sent) {
-        wp_send_json_success(array('message' => 'پیام شما با موفقیت ارسال شد.'));
-    } else {
-        wp_send_json_error(array('message' => 'خطا در ارسال پیام. لطفا دوباره تلاش کنید.'));
-    }
-}
-add_action('wp_ajax_xiaomi_sari_submit_lead', 'xiaomi_sari_submit_lead');
-add_action('wp_ajax_nopriv_xiaomi_sari_submit_lead', 'xiaomi_sari_submit_lead');
-
-/**
- * WooCommerce Customizations
- */
-function xiaomi_sari_wc_add_to_cart_btn($button, $product) {
-    return str_replace('button', 'button btn btn-primary', $button);
-}
-add_filter('woocommerce_loop_add_to_cart_link', 'xiaomi_sari_wc_add_to_cart_btn', 10, 2);
-
-function xiaomi_sari_wc_loop_columns() {
-    return 4;
-}
-add_filter('loop_shop_columns', 'xiaomi_sari_wc_loop_columns');
-
-function xiaomi_sari_wc_products_per_page() {
-    return 12;
-}
-add_filter('loop_shop_per_page', 'xiaomi_sari_wc_products_per_page');
-
-/**
- * Shortcode: Featured Products
- */
-function xiaomi_sari_featured_products_shortcode($atts) {
-    $atts = shortcode_atts(array(
-        'count'    => 6,
-        'category' => '',
-    ), $atts);
-    
-    $args = array(
-        'post_type'      => 'product',
-        'posts_per_page' => $atts['count'],
-        'meta_key'       => '_featured',
-        'meta_value'     => 'yes',
-    );
-    
-    if (!empty($atts['category'])) {
-        $args['tax_query'] = array(
-            array(
-                'taxonomy' => 'product_cat',
-                'field'    => 'slug',
-                'terms'    => $atts['category'],
-            ),
-        );
-    }
-    
-    $products = new WP_Query($args);
-    
-    ob_start();
-    
-    if ($products->have_posts()) {
-        echo '<div class="products-grid">';
-        
-        while ($products->have_posts()) {
-            $products->the_post();
-            global $product;
-            
-            $image = wp_get_attachment_image_src(get_post_thumbnail_id(), 'large');
-            $price = $product->get_price_html();
-            $sale_price = $product->get_sale_price();
-            $regular_price = $product->get_regular_price();
-            
-            ?>
-            <div class="product-card glass-card-hover">
-                <div class="product-image-wrapper">
-                    <a href="<?php the_permalink(); ?>">
-                        <img src="<?php echo esc_url($image[0]); ?>" alt="<?php the_title_attribute(); ?>" class="product-image">
-                    </a>
-                    
-                    <?php if ($product->is_on_sale()) : ?>
-                    <span class="product-discount-badge">
-                        <?php 
-                        $discount = round((($regular_price - $sale_price) / $regular_price) * 100);
-                        echo xiaomi_sari_to_persian($discount) . '٪ تخفیف';
-                        ?>
-                    </span>
-                    <?php endif; ?>
-                    
-                    <span class="product-category-badge glass-effect">
-                        <?php 
-                        $terms = get_the_terms(get_the_ID(), 'product_cat');
-                        if ($terms) echo esc_html($terms[0]->name);
-                        ?>
-                    </span>
-                    
-                    <div class="product-overlay">
-                        <a href="<?php the_permalink(); ?>" class="product-action-btn primary">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-                                <circle cx="12" cy="12" r="3"/>
-                            </svg>
-                        </a>
-                        <button class="product-action-btn secondary add-to-cart" data-product-id="<?php echo get_the_ID(); ?>">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <circle cx="9" cy="21" r="1"/>
-                                <circle cx="20" cy="21" r="1"/>
-                                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
-                            </svg>
-                        </button>
-                    </div>
-                </div>
-                
-                <div class="product-info">
-                    <a href="<?php the_permalink(); ?>">
-                        <h3 class="product-title"><?php the_title(); ?></h3>
-                    </a>
-                    <div class="product-price-wrapper">
-                        <div>
-                            <p class="product-price"><?php echo $price; ?></p>
-                        </div>
-                        <button class="btn btn-icon btn-primary add-to-cart" data-product-id="<?php echo get_the_ID(); ?>">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <circle cx="9" cy="21" r="1"/>
-                                <circle cx="20" cy="21" r="1"/>
-                                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
-                            </svg>
-                        </button>
-                    </div>
-                </div>
-            </div>
-            <?php
-        }
-        
-        echo '</div>';
-        
-        wp_reset_postdata();
-    }
-    
-    return ob_get_clean();
-}
-add_shortcode('xiaomi_featured_products', 'xiaomi_sari_featured_products_shortcode');
-
-/**
- * Shortcode: Product Categories
- */
-function xiaomi_sari_categories_shortcode($atts) {
-    $atts = shortcode_atts(array(
-        'count'     => 5,
-        'parent'    => 0,
-        'hide_empty' => true,
-    ), $atts);
-    
-    $categories = get_terms(array(
-        'taxonomy'   => 'product_cat',
-        'number'     => $atts['count'],
-        'parent'     => $atts['parent'],
-        'hide_empty' => $atts['hide_empty'],
-    ));
-    
-    ob_start();
-    
-    if (!empty($categories) && !is_wp_error($categories)) {
-        echo '<div class="categories-grid">';
-        
-        foreach ($categories as $category) {
-            $thumbnail_id = get_term_meta($category->term_id, 'thumbnail_id', true);
-            $image = wp_get_attachment_url($thumbnail_id);
-            
-            ?>
-            <a href="<?php echo get_term_link($category); ?>" class="category-card">
-                <div class="category-image-wrapper">
-                    <?php if ($image) : ?>
-                    <img src="<?php echo esc_url($image); ?>" alt="<?php echo esc_attr($category->name); ?>" class="category-image">
-                    <?php endif; ?>
-                </div>
-                <div class="category-overlay">
-                    <h3 class="category-name"><?php echo esc_html($category->name); ?></h3>
-                </div>
-            </a>
-            <?php
-        }
-        
-        echo '</div>';
-    }
-    
-    return ob_get_clean();
-}
-add_shortcode('xiaomi_categories', 'xiaomi_sari_categories_shortcode');
-
-/**
- * Shortcode: Testimonials
- */
-function xiaomi_sari_testimonials_shortcode($atts) {
-    $atts = shortcode_atts(array(
-        'count' => 3,
-    ), $atts);
-    
-    $testimonials = array(
-        array(
-            'name'    => 'محمد رضایی',
-            'role'    => 'مشتری',
-            'initial' => 'م',
-            'text'    => 'بسیار راضی هستم از خریدم. کیفیت محصول عالی بود و پشتیبانی فوق‌العاده. قطعا دوباره خرید می‌کنم.',
-            'rating'  => 5,
-        ),
-        array(
-            'name'    => 'زهرا احمدی',
-            'role'    => 'مشتری',
-            'initial' => 'ز',
-            'text'    => 'ارسال سریع و بسته‌بندی مناسب. گوشی کاملا اورجینال بود و با گارانتی معتبر. ممنون از شیائومی ساری.',
-            'rating'  => 5,
-        ),
-        array(
-            'name'    => 'علی محمدی',
-            'role'    => 'مشتری',
-            'initial' => 'ع',
-            'text'    => 'قیمت‌ها نسبت به بازار خیلی مناسب‌تره. مشاوره خریدشون هم عالی بود و کمک کرد بهترین انتخاب رو داشته باشم.',
-            'rating'  => 5,
-        ),
-    );
-    
-    ob_start();
-    
-    echo '<div class="testimonials-grid">';
-    
-    foreach (array_slice($testimonials, 0, $atts['count']) as $testimonial) {
-        ?>
-        <div class="testimonial-card glass-card">
-            <div class="testimonial-stars">
-                <?php for ($i = 0; $i < $testimonial['rating']; $i++) : ?>
-                <svg class="testimonial-star" viewBox="0 0 24 24" fill="currentColor">
-                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
-                </svg>
-                <?php endfor; ?>
-            </div>
-            <p class="testimonial-text"><?php echo esc_html($testimonial['text']); ?></p>
-            <div class="testimonial-author">
-                <div class="testimonial-avatar"><?php echo esc_html($testimonial['initial']); ?></div>
-                <div>
-                    <div class="testimonial-name"><?php echo esc_html($testimonial['name']); ?></div>
-                    <div class="testimonial-role"><?php echo esc_html($testimonial['role']); ?></div>
-                </div>
-            </div>
-        </div>
-        <?php
-    }
-    
-    echo '</div>';
-    
-    return ob_get_clean();
-}
-add_shortcode('xiaomi_testimonials', 'xiaomi_sari_testimonials_shortcode');
-
-/**
- * Shortcode: Lead Form
- */
-function xiaomi_sari_lead_form_shortcode($atts) {
-    $atts = shortcode_atts(array(
-        'title'       => 'دریافت مشاوره رایگان',
-        'description' => 'شماره خود را وارد کنید تا کارشناسان ما با شما تماس بگیرند.',
-    ), $atts);
-    
-    ob_start();
-    ?>
-    <div class="lead-form-wrapper glass-card">
-        <h2 class="lead-title"><?php echo esc_html($atts['title']); ?></h2>
-        <p class="lead-description"><?php echo esc_html($atts['description']); ?></p>
-        <form class="lead-form" id="xiaomi-lead-form">
-            <input type="text" name="name" class="form-input form-input-lg" placeholder="نام و نام خانوادگی" required>
-            <input type="tel" name="phone" class="form-input form-input-lg" placeholder="شماره موبایل" required>
-            <button type="submit" class="btn btn-primary btn-lg">ثبت درخواست</button>
-        </form>
-    </div>
-    <?php
-    return ob_get_clean();
-}
-add_shortcode('xiaomi_lead_form', 'xiaomi_sari_lead_form_shortcode');
-
-/**
- * Shortcode: Value Propositions
- */
-function xiaomi_sari_values_shortcode() {
-    $values = array(
-        array(
-            'icon'  => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>',
-            'title' => 'گارانتی اصالت کالا',
-            'desc'  => 'تمامی محصولات با ضمانت اصالت و گارانتی معتبر ارائه می‌شوند',
-        ),
-        array(
-            'icon'  => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>',
-            'title' => 'ارسال سریع و رایگان',
-            'desc'  => 'ارسال رایگان به سراسر استان مازندران در کمتر از ۲۴ ساعت',
-        ),
-        array(
-            'icon'  => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>',
-            'title' => 'بهترین قیمت بازار',
-            'desc'  => 'تضمین پایین‌ترین قیمت با امکان مقایسه قیمت',
-        ),
-        array(
-            'icon'  => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>',
-            'title' => 'پشتیبانی تخصصی',
-            'desc'  => 'مشاوره رایگان و پشتیبانی ۷ روز هفته',
-        ),
-    );
-    
-    ob_start();
-    
-    echo '<div class="value-grid">';
-    
-    foreach ($values as $value) {
-        ?>
-        <div class="value-card glass-card">
-            <div class="value-icon"><?php echo $value['icon']; ?></div>
-            <h3 class="value-title"><?php echo esc_html($value['title']); ?></h3>
-            <p class="value-description"><?php echo esc_html($value['desc']); ?></p>
-        </div>
-        <?php
-    }
-    
-    echo '</div>';
-    
-    return ob_get_clean();
-}
-add_shortcode('xiaomi_values', 'xiaomi_sari_values_shortcode');
-
-/**
- * Output Header Template
+ * Header Template Function
  */
 function xiaomi_sari_header_template() {
     ?>
@@ -3430,154 +2827,135 @@ function xiaomi_sari_header_template() {
     <meta name="theme-color" content="#121212">
     <?php wp_head(); ?>
 </head>
-<body <?php body_class(); ?>>
+<body <?php body_class('bg-background text-foreground'); ?>>
 <?php wp_body_open(); ?>
 
-<header class="site-header" id="site-header">
+<header class="site-header">
     <div class="container">
         <div class="header-content">
-            <a href="<?php echo home_url(); ?>" class="site-logo">
-                <?php echo get_bloginfo('name'); ?>
+            <a href="<?php echo esc_url(home_url('/')); ?>" class="site-logo">
+                شیائومی ساری
             </a>
-
+            
             <nav class="main-nav">
-                <?php
-                wp_nav_menu(array(
-                    'theme_location' => 'primary',
-                    'container'      => false,
-                    'items_wrap'     => '%3$s',
-                    'link_before'    => '<span class="nav-link">',
-                    'link_after'     => '</span>',
-                    'fallback_cb'    => function() {
-                        echo '<a href="' . home_url() . '" class="nav-link">صفحه اصلی</a>';
-                        echo '<a href="' . (function_exists('wc_get_page_id') ? get_permalink(wc_get_page_id('shop')) : home_url('/shop')) . '" class="nav-link">محصولات</a>';
-                        echo '<a href="' . home_url('/about') . '" class="nav-link">درباره ما</a>';
-                        echo '<a href="' . home_url('/contact') . '" class="nav-link">تماس با ما</a>';
-                    }
-                ));
-                ?>
+                <a href="<?php echo esc_url(home_url('/')); ?>" class="nav-link">صفحه اصلی</a>
+                <a href="<?php echo esc_url(home_url('/shop')); ?>" class="nav-link">فروشگاه</a>
+                <a href="<?php echo esc_url(home_url('/about')); ?>" class="nav-link">درباره ما</a>
+                <a href="<?php echo esc_url(home_url('/contact')); ?>" class="nav-link">تماس با ما</a>
             </nav>
-
-            <div class="header-cta">
-                <a href="tel:<?php echo xiaomi_sari_get_contact_info('phone'); ?>" class="header-phone">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
-                    </svg>
-                    <span><?php echo xiaomi_sari_to_persian(xiaomi_sari_get_contact_info('phone')); ?></span>
+            
+            <div class="nav-actions">
+                <a href="<?php echo esc_url(home_url('/cart')); ?>" class="btn btn-ghost btn-icon cart-badge">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
+                    <?php if (function_exists('WC') && WC()->cart): ?>
+                    <span class="cart-count"><?php echo WC()->cart->get_cart_contents_count(); ?></span>
+                    <?php endif; ?>
                 </a>
-                <a href="<?php echo home_url('/contact'); ?>" class="btn btn-primary btn-sm">تماس با ما</a>
+                <a href="<?php echo esc_url(home_url('/profile')); ?>" class="btn btn-ghost btn-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                </a>
             </div>
-
-            <button class="mobile-menu-toggle" aria-label="منوی موبایل" aria-expanded="false">
-                <span></span>
-                <span></span>
-                <span></span>
-            </button>
         </div>
-
-        <nav class="mobile-menu">
-            <?php
-            wp_nav_menu(array(
-                'theme_location' => 'mobile',
-                'container'      => false,
-                'items_wrap'     => '%3$s',
-                'link_before'    => '<span class="mobile-nav-link">',
-                'link_after'     => '</span>',
-                'fallback_cb'    => function() {
-                    echo '<a href="' . home_url() . '" class="mobile-nav-link">صفحه اصلی</a>';
-                    echo '<a href="' . (function_exists('wc_get_page_id') ? get_permalink(wc_get_page_id('shop')) : home_url('/shop')) . '" class="mobile-nav-link">محصولات</a>';
-                    echo '<a href="' . home_url('/about') . '" class="mobile-nav-link">درباره ما</a>';
-                    echo '<a href="' . home_url('/contact') . '" class="mobile-nav-link">تماس با ما</a>';
-                }
-            ));
-            ?>
-        </nav>
     </div>
 </header>
     <?php
 }
 
 /**
- * Output Footer Template
+ * Footer Template Function
  */
 function xiaomi_sari_footer_template() {
     ?>
 <footer class="site-footer">
     <div class="container">
         <div class="footer-grid">
+            <!-- Brand -->
             <div class="footer-brand">
-                <a href="<?php echo home_url(); ?>" class="site-logo"><?php echo get_bloginfo('name'); ?></a>
-                <p>فروشگاه تخصصی محصولات شیائومی با تضمین اصالت کالا و بهترین قیمت در بازار.</p>
+                <div class="footer-logo">شیائومی ساری</div>
+                <p class="footer-description">
+                    فروشگاه تخصصی محصولات شیائومی در ساری. ارائه‌دهنده انواع گوشی، لوازم جانبی و محصولات هوشمند با گارانتی اصالت و قیمت مناسب.
+                </p>
+                <div class="footer-social">
+                    <a href="#" class="social-link">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
+                    </a>
+                    <a href="#" class="social-link">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
+                    </a>
+                </div>
             </div>
-
+            
+            <!-- Quick Links -->
             <div>
                 <h4 class="footer-title">دسترسی سریع</h4>
                 <ul class="footer-links">
-                    <li><a href="<?php echo home_url(); ?>">صفحه اصلی</a></li>
-                    <li><a href="<?php echo function_exists('wc_get_page_id') ? get_permalink(wc_get_page_id('shop')) : home_url('/shop'); ?>">محصولات</a></li>
-                    <li><a href="<?php echo home_url('/about'); ?>">درباره ما</a></li>
-                    <li><a href="<?php echo home_url('/contact'); ?>">تماس با ما</a></li>
+                    <li><a href="<?php echo esc_url(home_url('/')); ?>" class="footer-link">صفحه اصلی</a></li>
+                    <li><a href="<?php echo esc_url(home_url('/shop')); ?>" class="footer-link">فروشگاه</a></li>
+                    <li><a href="<?php echo esc_url(home_url('/about')); ?>" class="footer-link">درباره ما</a></li>
+                    <li><a href="<?php echo esc_url(home_url('/contact')); ?>" class="footer-link">تماس با ما</a></li>
                 </ul>
             </div>
-
+            
+            <!-- Categories -->
             <div>
-                <h4 class="footer-title">اطلاعات تماس</h4>
-                <div class="footer-contact-item">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-                    <span><?php echo xiaomi_sari_to_persian(xiaomi_sari_get_contact_info('phone')); ?></span>
-                </div>
-                <div class="footer-contact-item">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                    <span><?php echo xiaomi_sari_get_contact_info('address'); ?></span>
-                </div>
-                <div class="footer-contact-item">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                    <span><?php echo xiaomi_sari_get_contact_info('hours'); ?></span>
-                </div>
+                <h4 class="footer-title">دسته‌بندی‌ها</h4>
+                <ul class="footer-links">
+                    <li><a href="#" class="footer-link">موبایل</a></li>
+                    <li><a href="#" class="footer-link">تلویزیون</a></li>
+                    <li><a href="#" class="footer-link">لوازم خانگی</a></li>
+                    <li><a href="#" class="footer-link">لوازم جانبی</a></li>
+                </ul>
             </div>
-
+            
+            <!-- Contact -->
             <div>
-                <h4 class="footer-title">شبکه‌های اجتماعی</h4>
-                <div class="footer-social">
-                    <?php $social = xiaomi_sari_get_social_links(); ?>
-                    <?php if ($social['instagram']) : ?>
-                    <a href="<?php echo esc_url($social['instagram']); ?>" target="_blank" rel="noopener">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
-                    </a>
-                    <?php endif; ?>
-                    <?php if ($social['telegram']) : ?>
-                    <a href="<?php echo esc_url($social['telegram']); ?>" target="_blank" rel="noopener">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-                    </a>
-                    <?php endif; ?>
+                <h4 class="footer-title">تماس با ما</h4>
+                <div class="footer-contact-item">
+                    <svg class="footer-contact-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                    <span>۰۱۱-۳۳۳۳۳۳۳۳</span>
+                </div>
+                <div class="footer-contact-item">
+                    <svg class="footer-contact-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                    <span>ساری، خیابان فرهنگ</span>
+                </div>
+                <div class="footer-contact-item">
+                    <svg class="footer-contact-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    <span>شنبه تا پنجشنبه ۹-۲۱</span>
                 </div>
             </div>
         </div>
-
+        
         <div class="footer-bottom">
-            <p>© <?php echo xiaomi_sari_to_persian(date('Y')); ?> <?php echo get_bloginfo('name'); ?> - تمامی حقوق محفوظ است.</p>
+            <p class="footer-copyright">
+                © <?php echo date('Y'); ?> شیائومی ساری. تمامی حقوق محفوظ است.
+            </p>
         </div>
     </div>
 </footer>
 
-<nav class="mobile-toolbar">
-    <a href="<?php echo home_url(); ?>" class="toolbar-item <?php echo is_front_page() ? 'active' : ''; ?>">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-        <span>خانه</span>
-    </a>
-    <a href="<?php echo function_exists('wc_get_page_id') ? get_permalink(wc_get_page_id('shop')) : home_url('/shop'); ?>" class="toolbar-item <?php echo function_exists('is_shop') && is_shop() ? 'active' : ''; ?>">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-        <span>محصولات</span>
-    </a>
-    <a href="<?php echo function_exists('wc_get_cart_url') ? wc_get_cart_url() : home_url('/cart'); ?>" class="toolbar-item <?php echo function_exists('is_cart') && is_cart() ? 'active' : ''; ?>">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
-        <span>سبد خرید</span>
-    </a>
-    <a href="tel:<?php echo xiaomi_sari_get_contact_info('phone'); ?>" class="toolbar-item">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-        <span>تماس</span>
-    </a>
-</nav>
+<!-- Floating Toolbar -->
+<div class="floating-toolbar">
+    <div class="toolbar-container">
+        <a href="<?php echo esc_url(home_url('/')); ?>" class="toolbar-btn <?php echo is_front_page() ? 'active' : ''; ?>">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        </a>
+        <a href="<?php echo esc_url(home_url('/shop')); ?>" class="toolbar-btn <?php echo is_shop() ? 'active' : ''; ?>">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>
+        </a>
+        <a href="<?php echo esc_url(home_url('/cart')); ?>" class="toolbar-btn cart-badge">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
+            <?php if (function_exists('WC') && WC()->cart && WC()->cart->get_cart_contents_count() > 0): ?>
+            <span class="toolbar-badge"><?php echo WC()->cart->get_cart_contents_count(); ?></span>
+            <?php endif; ?>
+        </a>
+        <a href="tel:01133333333" class="toolbar-btn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        </a>
+        <a href="<?php echo esc_url(home_url('/profile')); ?>" class="toolbar-btn <?php echo is_page('profile') ? 'active' : ''; ?>">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        </a>
+    </div>
+</div>
 
 <?php wp_footer(); ?>
 </body>
@@ -3586,34 +2964,484 @@ function xiaomi_sari_footer_template() {
 }
 
 /**
- * Body Classes
+ * AJAX Handler for Lead Form
  */
-function xiaomi_sari_body_classes($classes) {
-    $classes[] = 'xiaomi-sari-theme';
-    $classes[] = 'dark-mode';
+function xiaomi_sari_lead_form_handler() {
+    check_ajax_referer('xiaomi_sari_nonce', 'nonce');
     
-    if (is_front_page()) {
-        $classes[] = 'front-page';
+    $phone = sanitize_text_field($_POST['phone']);
+    
+    if (!empty($phone)) {
+        // Here you can save to database or send email
+        // For now, just return success
+        wp_send_json_success(array('message' => 'شماره با موفقیت ثبت شد'));
+    } else {
+        wp_send_json_error(array('message' => 'شماره تلفن الزامی است'));
     }
-    
-    if (class_exists('WooCommerce')) {
-        if (is_shop() || is_product_category() || is_product_tag()) {
-            $classes[] = 'shop-page';
-        }
-        if (is_product()) {
-            $classes[] = 'single-product-page';
-        }
-        if (is_cart()) {
-            $classes[] = 'cart-page';
-        }
-        if (is_checkout()) {
-            $classes[] = 'checkout-page';
-        }
-    }
-    
-    return $classes;
 }
-add_filter('body_class', 'xiaomi_sari_body_classes');
+add_action('wp_ajax_xiaomi_sari_lead_form', 'xiaomi_sari_lead_form_handler');
+add_action('wp_ajax_nopriv_xiaomi_sari_lead_form', 'xiaomi_sari_lead_form_handler');
 
-// Remove WordPress version meta tag
-remove_action('wp_head', 'wp_generator');
+/**
+ * AJAX Handler for Contact Form
+ */
+function xiaomi_sari_contact_form_handler() {
+    check_ajax_referer('xiaomi_sari_nonce', 'nonce');
+    
+    $name = sanitize_text_field($_POST['name']);
+    $phone = sanitize_text_field($_POST['phone']);
+    $email = sanitize_email($_POST['email']);
+    $message = sanitize_textarea_field($_POST['message']);
+    
+    if (!empty($name) && !empty($phone) && !empty($message)) {
+        // Here you can save to database or send email
+        wp_send_json_success(array('message' => 'پیام با موفقیت ارسال شد'));
+    } else {
+        wp_send_json_error(array('message' => 'لطفا تمام فیلدها را پر کنید'));
+    }
+}
+add_action('wp_ajax_xiaomi_sari_contact_form', 'xiaomi_sari_contact_form_handler');
+add_action('wp_ajax_nopriv_xiaomi_sari_contact_form', 'xiaomi_sari_contact_form_handler');
+
+/**
+ * Shortcodes
+ */
+
+// Values Section
+function xiaomi_sari_values_shortcode() {
+    ob_start();
+    ?>
+    <section class="section">
+        <div class="container">
+            <div class="section-header scroll-animate animate-fade-up">
+                <span class="section-badge">چرا شیائومی ساری؟</span>
+                <h2 class="section-title">مزایای خرید از ما</h2>
+            </div>
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="glass-card value-card rounded-2xl scroll-animate animate-fade-up">
+                    <div class="value-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/><path d="m9 12 2 2 4-4"/></svg>
+                    </div>
+                    <h3 class="value-title">گارانتی اصالت کالا</h3>
+                    <p class="value-description">تمامی محصولات دارای گارانتی اصالت و سلامت فیزیکی هستند</p>
+                </div>
+                <div class="glass-card value-card rounded-2xl scroll-animate animate-fade-up" style="animation-delay: 0.1s;">
+                    <div class="value-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M15 18H9"/><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"/><circle cx="17" cy="18" r="2"/><circle cx="7" cy="18" r="2"/></svg>
+                    </div>
+                    <h3 class="value-title">ارسال سریع</h3>
+                    <p class="value-description">ارسال رایگان برای خریدهای بالای ۵۰۰ هزار تومان</p>
+                </div>
+                <div class="glass-card value-card rounded-2xl scroll-animate animate-fade-up" style="animation-delay: 0.2s;">
+                    <div class="value-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+                    </div>
+                    <h3 class="value-title">پشتیبانی ۲۴/۷</h3>
+                    <p class="value-description">پاسخگویی به سوالات شما در تمام ساعات شبانه‌روز</p>
+                </div>
+                <div class="glass-card value-card rounded-2xl scroll-animate animate-fade-up" style="animation-delay: 0.3s;">
+                    <div class="value-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 15h2a2 2 0 1 0 0-4h-3c-.6 0-1.1.2-1.4.6L3 17"/><path d="m7 21 1.6-1.4c.3-.4.8-.6 1.4-.6h4c1.1 0 2.1-.4 2.8-1.2l4.6-4.4a2 2 0 0 0-2.75-2.91l-4.2 3.9"/><path d="m2 16 6 6"/><circle cx="16" cy="9" r="2.9"/><circle cx="6" cy="5" r="3"/></svg>
+                    </div>
+                    <h3 class="value-title">قیمت مناسب</h3>
+                    <p class="value-description">بهترین قیمت‌ها با تضمین برگشت تفاوت قیمت</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <?php
+    return ob_get_clean();
+}
+add_shortcode('xiaomi_values', 'xiaomi_sari_values_shortcode');
+
+// Categories Section
+function xiaomi_sari_categories_shortcode() {
+    ob_start();
+    ?>
+    <section class="section section-bg">
+        <div class="container">
+            <div class="section-header scroll-animate animate-fade-up">
+                <span class="section-badge">دسته‌بندی‌ها</span>
+                <h2 class="section-title">محصولات بر اساس دسته‌بندی</h2>
+            </div>
+            <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <a href="#" class="glass-card-hover category-card rounded-2xl scroll-animate animate-fade-up">
+                    <img src="<?php echo XIAOMI_SARI_THEME_URI; ?>/assets/images/category-phone.jpg" alt="موبایل">
+                    <div class="category-overlay">
+                        <h3 class="category-title">موبایل</h3>
+                        <span class="category-count">+۵۰ محصول</span>
+                    </div>
+                </a>
+                <a href="#" class="glass-card-hover category-card rounded-2xl scroll-animate animate-fade-up" style="animation-delay: 0.1s;">
+                    <img src="<?php echo XIAOMI_SARI_THEME_URI; ?>/assets/images/category-tv.jpg" alt="تلویزیون">
+                    <div class="category-overlay">
+                        <h3 class="category-title">تلویزیون</h3>
+                        <span class="category-count">+۲۰ محصول</span>
+                    </div>
+                </a>
+                <a href="#" class="glass-card-hover category-card rounded-2xl scroll-animate animate-fade-up" style="animation-delay: 0.2s;">
+                    <img src="<?php echo XIAOMI_SARI_THEME_URI; ?>/assets/images/category-vacuum.jpg" alt="جارو رباتیک">
+                    <div class="category-overlay">
+                        <h3 class="category-title">جارو رباتیک</h3>
+                        <span class="category-count">+۱۵ محصول</span>
+                    </div>
+                </a>
+                <a href="#" class="glass-card-hover category-card rounded-2xl scroll-animate animate-fade-up" style="animation-delay: 0.3s;">
+                    <img src="<?php echo XIAOMI_SARI_THEME_URI; ?>/assets/images/category-monitor.jpg" alt="مانیتور">
+                    <div class="category-overlay">
+                        <h3 class="category-title">مانیتور</h3>
+                        <span class="category-count">+۱۰ محصول</span>
+                    </div>
+                </a>
+                <a href="#" class="glass-card-hover category-card rounded-2xl scroll-animate animate-fade-up" style="animation-delay: 0.4s;">
+                    <img src="<?php echo XIAOMI_SARI_THEME_URI; ?>/assets/images/category-appliances.jpg" alt="لوازم خانگی">
+                    <div class="category-overlay">
+                        <h3 class="category-title">لوازم خانگی</h3>
+                        <span class="category-count">+۳۰ محصول</span>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </section>
+    <?php
+    return ob_get_clean();
+}
+add_shortcode('xiaomi_categories', 'xiaomi_sari_categories_shortcode');
+
+// Featured Products
+function xiaomi_sari_featured_products_shortcode($atts) {
+    $atts = shortcode_atts(array(
+        'limit' => 6,
+    ), $atts);
+
+    ob_start();
+    ?>
+    <section class="section" id="products">
+        <div class="container">
+            <div class="section-header scroll-animate animate-fade-up">
+                <span class="section-badge">محصولات ویژه</span>
+                <h2 class="section-title">پرفروش‌ترین محصولات</h2>
+            </div>
+            <div class="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                <?php
+                if (function_exists('wc_get_products')) {
+                    $products = wc_get_products(array(
+                        'limit' => $atts['limit'],
+                        'status' => 'publish',
+                        'orderby' => 'popularity',
+                    ));
+                    
+                    foreach ($products as $index => $product) {
+                        $image = wp_get_attachment_image_src($product->get_image_id(), 'medium');
+                        $regular_price = $product->get_regular_price();
+                        $sale_price = $product->get_sale_price();
+                        ?>
+                        <div class="glass-card-hover product-card rounded-2xl scroll-animate animate-fade-up" style="animation-delay: <?php echo $index * 0.1; ?>s;" data-category="<?php echo esc_attr($product->get_categories()[0]->name ?? ''); ?>">
+                            <div class="product-image-wrapper product-tilt">
+                                <img src="<?php echo esc_url($image[0] ?? ''); ?>" alt="<?php echo esc_attr($product->get_name()); ?>">
+                                <div class="product-overlay">
+                                    <a href="<?php echo esc_url($product->get_permalink()); ?>" class="product-overlay-btn primary">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+                                    </a>
+                                    <button class="product-overlay-btn secondary">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
+                                    </button>
+                                </div>
+                                <?php if ($sale_price): ?>
+                                    <span class="product-badge discount">تخفیف</span>
+                                <?php endif; ?>
+                            </div>
+                            <div class="product-info">
+                                <a href="<?php echo esc_url($product->get_permalink()); ?>">
+                                    <h3 class="product-title"><?php echo esc_html($product->get_name()); ?></h3>
+                                </a>
+                                <div class="product-price-row">
+                                    <div>
+                                        <p class="product-price"><?php echo number_format($product->get_price()); ?> تومان</p>
+                                        <?php if ($sale_price): ?>
+                                            <p class="product-original-price"><?php echo number_format($regular_price); ?> تومان</p>
+                                        <?php endif; ?>
+                                    </div>
+                                    <button class="btn btn-primary btn-icon">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <?php
+                    }
+                } else {
+                    // Demo products if WooCommerce not active
+                    $demo_products = array(
+                        array('name' => 'Xiaomi 14 Ultra', 'price' => '۴۵,۹۰۰,۰۰۰', 'old_price' => '۴۹,۰۰۰,۰۰۰', 'discount' => '۷٪', 'category' => 'موبایل'),
+                        array('name' => 'Xiaomi TV A Pro 55"', 'price' => '۲۲,۵۰۰,۰۰۰', 'old_price' => '۲۵,۰۰۰,۰۰۰', 'discount' => '۱۰٪', 'category' => 'تلویزیون'),
+                        array('name' => 'Roborock S8 Pro Ultra', 'price' => '۳۸,۰۰۰,۰۰۰', 'old_price' => null, 'discount' => null, 'category' => 'جارو رباتیک'),
+                        array('name' => 'Redmi Note 13 Pro+', 'price' => '۱۸,۹۰۰,۰۰۰', 'old_price' => '۲۰,۵۰۰,۰۰۰', 'discount' => '۸٪', 'category' => 'موبایل'),
+                        array('name' => 'Xiaomi Monitor 27"', 'price' => '۸,۵۰۰,۰۰۰', 'old_price' => null, 'discount' => null, 'category' => 'مانیتور'),
+                        array('name' => 'Mi Air Purifier 4', 'price' => '۴,۲۰۰,۰۰۰', 'old_price' => '۴,۸۰۰,۰۰۰', 'discount' => '۱۲٪', 'category' => 'لوازم خانگی'),
+                    );
+                    
+                    foreach ($demo_products as $index => $product) {
+                        ?>
+                        <div class="glass-card-hover product-card rounded-2xl scroll-animate animate-fade-up" style="animation-delay: <?php echo $index * 0.05; ?>s;" data-category="<?php echo esc_attr($product['category']); ?>">
+                            <div class="product-image-wrapper product-tilt">
+                                <img src="<?php echo XIAOMI_SARI_THEME_URI; ?>/assets/images/product-<?php echo $index + 1; ?>.jpg" alt="<?php echo esc_attr($product['name']); ?>">
+                                <div class="product-overlay">
+                                    <a href="#" class="product-overlay-btn primary">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+                                    </a>
+                                    <button class="product-overlay-btn secondary">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
+                                    </button>
+                                </div>
+                                <?php if ($product['discount']): ?>
+                                    <span class="product-badge discount"><?php echo $product['discount']; ?> تخفیف</span>
+                                <?php endif; ?>
+                                <span class="product-badge category"><?php echo $product['category']; ?></span>
+                            </div>
+                            <div class="product-info">
+                                <a href="#">
+                                    <h3 class="product-title"><?php echo esc_html($product['name']); ?></h3>
+                                </a>
+                                <div class="product-price-row">
+                                    <div>
+                                        <p class="product-price"><?php echo $product['price']; ?> تومان</p>
+                                        <?php if ($product['old_price']): ?>
+                                            <p class="product-original-price"><?php echo $product['old_price']; ?> تومان</p>
+                                        <?php endif; ?>
+                                    </div>
+                                    <button class="btn btn-primary btn-icon">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <?php
+                    }
+                }
+                ?>
+            </div>
+            <div class="text-center mt-8 scroll-animate animate-fade-up">
+                <a href="<?php echo esc_url(home_url('/shop')); ?>" class="btn btn-secondary btn-lg rounded-2xl">
+                    مشاهده همه محصولات
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+                </a>
+            </div>
+        </div>
+    </section>
+    <?php
+    return ob_get_clean();
+}
+add_shortcode('xiaomi_featured_products', 'xiaomi_sari_featured_products_shortcode');
+
+// Testimonials
+function xiaomi_sari_testimonials_shortcode() {
+    ob_start();
+    ?>
+    <section class="section section-bg">
+        <div class="container">
+            <div class="section-header scroll-animate animate-fade-up">
+                <span class="section-badge">نظرات مشتریان</span>
+                <h2 class="section-title">مشتریان ما چه می‌گویند</h2>
+            </div>
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="glass-card testimonial-card rounded-2xl scroll-animate animate-fade-up">
+                    <div class="testimonial-rating">
+                        <?php for ($i = 0; $i < 5; $i++): ?>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                        <?php endfor; ?>
+                    </div>
+                    <p class="testimonial-text">
+                        خرید از شیائومی ساری تجربه فوق‌العاده‌ای بود. محصول اصل با بهترین قیمت و ارسال سریع. حتما باز هم خرید می‌کنم.
+                    </p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar">ع</div>
+                        <div>
+                            <p class="testimonial-name">علی محمدی</p>
+                            <p class="testimonial-product">خریدار Xiaomi 14 Ultra</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="glass-card testimonial-card rounded-2xl scroll-animate animate-fade-up" style="animation-delay: 0.1s;">
+                    <div class="testimonial-rating">
+                        <?php for ($i = 0; $i < 5; $i++): ?>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                        <?php endfor; ?>
+                    </div>
+                    <p class="testimonial-text">
+                        پشتیبانی عالی و مشاوره حرفه‌ای. تلویزیون شیائومی که خریدم واقعا کیفیت بی‌نظیری داره. ممنون از تیم شیائومی ساری.
+                    </p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar">م</div>
+                        <div>
+                            <p class="testimonial-name">مریم رضایی</p>
+                            <p class="testimonial-product">خریدار Xiaomi TV A Pro</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="glass-card testimonial-card rounded-2xl scroll-animate animate-fade-up" style="animation-delay: 0.2s;">
+                    <div class="testimonial-rating">
+                        <?php for ($i = 0; $i < 5; $i++): ?>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                        <?php endfor; ?>
+                    </div>
+                    <p class="testimonial-text">
+                        جارو رباتیک Roborock که از اینجا خریدم فوق‌العاده‌ست. قیمت منصفانه و گارانتی معتبر. پیشنهاد می‌کنم حتما سر بزنید.
+                    </p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar">ح</div>
+                        <div>
+                            <p class="testimonial-name">حسین کریمی</p>
+                            <p class="testimonial-product">خریدار Roborock S8</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <?php
+    return ob_get_clean();
+}
+add_shortcode('xiaomi_testimonials', 'xiaomi_sari_testimonials_shortcode');
+
+// Lead Form
+function xiaomi_sari_lead_form_shortcode() {
+    ob_start();
+    ?>
+    <section class="section">
+        <div class="container">
+            <div class="lead-form-section scroll-animate animate-fade-up">
+                <div class="text-center mb-8">
+                    <h2 class="section-title mb-4">از تخفیف‌های ویژه باخبر شوید</h2>
+                    <p class="section-description">شماره موبایل خود را وارد کنید تا از جدیدترین تخفیف‌ها و محصولات مطلع شوید</p>
+                </div>
+                <form class="lead-form">
+                    <input type="tel" name="phone" class="form-input form-input-lg rounded-2xl" placeholder="شماره موبایل (مثال: ۰۹۱۲۳۴۵۶۷۸۹)" required>
+                    <button type="submit" class="btn btn-hero rounded-2xl">
+                        ثبت شماره
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
+    <?php
+    return ob_get_clean();
+}
+add_shortcode('xiaomi_lead_form', 'xiaomi_sari_lead_form_shortcode');
+
+// FAQ Section
+function xiaomi_sari_faq_shortcode() {
+    ob_start();
+    ?>
+    <section class="section">
+        <div class="container">
+            <div class="section-header scroll-animate animate-fade-up">
+                <span class="section-badge">سوالات متداول</span>
+                <h2 class="section-title">پاسخ به سوالات شما</h2>
+            </div>
+            <div class="max-w-4xl mx-auto">
+                <div class="glass-card rounded-3xl p-6 scroll-animate animate-fade-up">
+                    <div class="faq-item open">
+                        <button class="faq-question">
+                            <span>آیا محصولات شما اصل هستند؟</span>
+                            <svg class="faq-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                        </button>
+                        <div class="faq-answer">
+                            <p class="faq-answer-text">بله، تمامی محصولات فروشگاه شیائومی ساری ۱۰۰٪ اورجینال و دارای گارانتی اصالت کالا هستند. ما مستقیماً از نمایندگی‌های رسمی شیائومی تامین می‌کنیم.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <button class="faq-question">
+                            <span>شرایط گارانتی چگونه است؟</span>
+                            <svg class="faq-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                        </button>
+                        <div class="faq-answer">
+                            <p class="faq-answer-text">تمامی محصولات دارای گارانتی ۱۸ ماهه شرکتی هستند. در صورت بروز هرگونه مشکل، می‌توانید از خدمات گارانتی استفاده کنید.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <button class="faq-question">
+                            <span>امکان خرید اقساطی وجود دارد؟</span>
+                            <svg class="faq-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                        </button>
+                        <div class="faq-answer">
+                            <p class="faq-answer-text">بله، امکان خرید اقساطی با چک یا کارت اعتباری بانک‌های طرف قرارداد وجود دارد. برای اطلاعات بیشتر با ما تماس بگیرید.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <button class="faq-question">
+                            <span>هزینه و زمان ارسال چقدر است؟</span>
+                            <svg class="faq-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                        </button>
+                        <div class="faq-answer">
+                            <p class="faq-answer-text">ارسال برای خریدهای بالای ۵۰۰ هزار تومان رایگان است. زمان ارسال در ساری ۱ روزه و سایر شهرها ۲ تا ۳ روز کاری می‌باشد.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <?php
+    return ob_get_clean();
+}
+add_shortcode('xiaomi_faq', 'xiaomi_sari_faq_shortcode');
+
+// Hero Section
+function xiaomi_sari_hero_shortcode($atts) {
+    $atts = shortcode_atts(array(
+        'title' => 'تکنولوژی پیشرفته',
+        'subtitle' => 'در دستان شما',
+        'description' => 'جدیدترین محصولات شیائومی با گارانتی اصالت و بهترین قیمت در فروشگاه شیائومی ساری',
+    ), $atts);
+    
+    ob_start();
+    ?>
+    <section class="hero-section">
+        <div class="hero-background">
+            <img src="<?php echo XIAOMI_SARI_THEME_URI; ?>/assets/images/hero-products.jpg" alt="Hero Background">
+            <div class="hero-overlay"></div>
+        </div>
+        <div class="container">
+            <div class="hero-content scroll-animate animate-fade-up">
+                <div class="hero-badge">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+                    نمایندگی رسمی شیائومی
+                </div>
+                <h1 class="hero-title">
+                    <?php echo esc_html($atts['title']); ?>
+                    <span class="text-primary"><?php echo esc_html($atts['subtitle']); ?></span>
+                </h1>
+                <p class="hero-description">
+                    <?php echo esc_html($atts['description']); ?>
+                </p>
+                <div class="hero-buttons">
+                    <a href="<?php echo esc_url(home_url('/shop')); ?>" class="btn btn-hero rounded-2xl animate-pulse-glow">
+                        مشاهده محصولات
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+                    </a>
+                    <a href="<?php echo esc_url(home_url('/contact')); ?>" class="btn btn-hero-outline rounded-2xl">
+                        تماس با ما
+                    </a>
+                </div>
+                <div class="hero-stats">
+                    <div class="hero-stat">
+                        <div class="hero-stat-value">۵۰۰+</div>
+                        <div class="hero-stat-label">محصول</div>
+                    </div>
+                    <div class="hero-stat">
+                        <div class="hero-stat-value">۱۰K+</div>
+                        <div class="hero-stat-label">مشتری</div>
+                    </div>
+                    <div class="hero-stat">
+                        <div class="hero-stat-value">۵+</div>
+                        <div class="hero-stat-label">سال تجربه</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <?php
+    return ob_get_clean();
+}
+add_shortcode('xiaomi_hero', 'xiaomi_sari_hero_shortcode');

@@ -3,8 +3,8 @@ Theme Name: Xiaomi Sari Theme
 Theme URI: https://xiaomisari.ir
 Author: Xiaomi Sari
 Author URI: https://xiaomisari.ir
-Description: قالب اختصاصی فروشگاه شیائومی ساری - سازگار با Hello Elementor و WooCommerce. تمام استایل‌ها در functions.php به صورت inline لود می‌شوند.
-Version: 2.0.0
+Description: قالب اختصاصی فروشگاه شیائومی ساری - تمام استایل‌ها در functions.php به صورت inline لود می‌شوند. فونت AzarMehr + Vazirmatn از CDN. سازگار با Hello Elementor و WooCommerce.
+Version: 3.0.0
 Requires at least: 6.0
 Tested up to: 6.4
 Requires PHP: 7.4
@@ -15,7 +15,7 @@ Tags: rtl, right-to-left, farsi, persian, woocommerce, elementor, dark-mode
 
 قالب اختصاصی فروشگاه شیائومی ساری
 تمام CSS و JS در functions.php به صورت inline بارگذاری می‌شوند
-فونت Vazirmatn به صورت لوکال از assets/fonts لود می‌شود
+فونت‌ها: AzarMehr (اصلی) + Vazirmatn (فالبک از CDN)
 */
 
 /* این فایل فقط برای اطلاعات قالب وردپرس استفاده می‌شود */
