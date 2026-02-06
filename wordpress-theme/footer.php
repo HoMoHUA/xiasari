@@ -1,6 +1,6 @@
 <?php
 /**
- * Footer Template - Loads from functions.php
+ * Footer Template
  *
  * @package Xiaomi_Sari
  */
